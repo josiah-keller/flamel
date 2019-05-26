@@ -1,5 +1,5 @@
 <template>
-  <div class="rune" v-bind:class="`color-${color}`">
+  <div class="rune" :class="`color-${color}`">
     {{ shape }}
   </div>
 </template>
@@ -17,16 +17,16 @@ export default {
   .rune {
     font-size: 22px;
 
-    .color-red {
+    &.color-red {
       color: red;
     }
-    .color-blue {
+    &.color-blue {
       color: blue;
     }
-    .color-magenta {
+    &.color-magenta {
       color: magenta;
     }
-    .color-green {
+    &.color-green {
       color: limegreen;
     }
   }

@@ -1,17 +1,34 @@
 <template>
-  <div class="board-cell">
-    {{ cell.shape }} / {{ cell.color }} / {{ cell.gold }}
+  <div class="board-cell" :class="{ 'gold': cell.gold }" @click="clicked">
+    <Rune :shape="cell.shape" :color="cell.color"/>
   </div>
 </template>
 
 <script>
+import Rune from "./Rune";
+
 export default {
+  components: {
+    Rune,
+  },
   props: {
     cell: Object,
+  },
+  methods: {
+    clicked() {
+      this.$emit("clicked");
+    },
   },
 }
 </script>
 
-<style>
+<style lang="scss">
+  .board-cell {
+    width: 100%;
+    height: 100%;
 
+    &:hover {
+      background: #aaa;
+    }
+  }
 </style>

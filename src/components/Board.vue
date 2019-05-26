@@ -1,9 +1,9 @@
 <template>
   <div class="board">
     <table>
-      <tr v-for="(row, index) in boardState.cells" :key="index">
+      <tr v-for="(row, rowIndex) in boardState.cells" :key="rowIndex">
         <td v-for="(cell, cellIndex) in row" :key="cellIndex">
-          <BoardCell v-bind:cell="cell"/>
+          <BoardCell :cell="cell" @clicked="cellClicked(rowIndex, cellIndex)"/>
         </td>
       </tr>
     </table>
@@ -19,6 +19,11 @@ export default {
   },
   props: {
     boardState: Object,
+  },
+  methods: {
+    cellClicked(rowIndex, cellIndex) {
+      this.$emit("cell-clicked", rowIndex, cellIndex);
+    },
   },
 }
 </script>

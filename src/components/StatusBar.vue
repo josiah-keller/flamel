@@ -2,7 +2,8 @@
   <div class="status-bar">
     <h1>AlChEmY</h1>
     <p>Score: {{ gameState.score }}</p>
-    <p>Forge: {{ gameState.forge }}</p>
+    <p>Forge: {{ gameState.forge }} / {{ gameState.maxForges }}</p>
+    <p><button @click="discard">Discard</button></p>
   </div>
 </template>
 
@@ -10,7 +11,12 @@
 export default {
   props: {
     gameState: Object,
-  }
+  },
+  methods: {
+    discard() {
+      this.$emit("discard-requested");
+    }
+  },
 }
 </script>
 
