@@ -27,7 +27,11 @@ export default {
     width: 100%;
     height: 100%;
 
-    &:hover {
+    &.gold {
+      background: #cccc0a;
+    }
+
+    &:hover:not(.gold) {
       background: #aaa;
     }
   }

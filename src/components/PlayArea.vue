@@ -75,6 +75,7 @@ export default {
       let cell = this.boardState.cells[rowIndex][cellIndex];
       cell.shape = this.nextRune.shape;
       cell.color = this.nextRune.color;
+      cell.gold = true;
       this.selectNextRune();
     },
     moveLegal(rune, rowIndex, cellIndex) {
