@@ -13,6 +13,9 @@ import StatusBar from "./StatusBar";
 import PlayerCursor from "./PlayerCursor";
 import GameOverScreen from "./GameOverScreen";
 
+const BOARD_WIDTH = 9;
+const BOARD_HEIGHT = 8;
+
 export default {
   components: {
     Board,
@@ -22,9 +25,9 @@ export default {
   },
   data() {
     let cells = [];
-    for(let i=0; i<8; i++) {
+    for(let i=0; i<BOARD_HEIGHT; i++) {
       cells.push([]);
-      for (let j=0; j<9; j++) {
+      for (let j=0; j<BOARD_WIDTH; j++) {
         cells[i].push({
           shape: null,
           color: null,
@@ -66,7 +69,48 @@ export default {
       this.selectNextRune();
     },
     place(rowIndex, cellIndex) {
-      
+      if (! this.moveLegal(this.nextRune, rowIndex, cellIndex)) {
+        return;
+      }
+      let cell = this.boardState.cells[rowIndex][cellIndex];
+      cell.shape = this.nextRune.shape;
+      cell.color = this.nextRune.color;
+      this.selectNextRune();
+    },
+    moveLegal(rune, rowIndex, cellIndex) {
+      if (rowIndex < 0 || rowIndex >= BOARD_HEIGHT || cellIndex < 0 || cellIndex >= BOARD_WIDTH) {
+        // out of bounds for some reason
+        return false;
+      }
+      let cell = this.boardState.cells[rowIndex][cellIndex];
+      if (cell.shape || cell.color) {
+        // already a rune there
+        return false;
+      }
+      if (rowIndex > 0) {
+        // up
+        if (! this.runesCompatible(rune, this.boardState.cells[rowIndex - 1][cellIndex])) return false;
+      }
+      if (rowIndex < BOARD_HEIGHT - 1) {
+        // down
+        if (! this.runesCompatible(rune, this.boardState.cells[rowIndex + 1][cellIndex])) return false;
+      }
+      if (cellIndex > 0) {
+        // left
+        if (! this.runesCompatible(rune, this.boardState.cells[rowIndex][cellIndex - 1])) return false;
+      }
+      if (cellIndex < BOARD_WIDTH - 1) {
+        // right
+        if (! this.runesCompatible(rune, this.boardState.cells[rowIndex][cellIndex + 1])) return false;
+      }
+      return true;
+    },
+    runesCompatible(rune1, rune2) {
+      // later, will need to account for wildcards
+      return rune1.shape === rune2.shape || rune1.color === rune2.color || this.blankRune(rune1) || this.blankRune(rune2);
+    },
+    blankRune(rune) {
+      return (! rune.shape) && (! rune.color);
     },
     gameOver() {
       this.gameState.isGameOver = true;
