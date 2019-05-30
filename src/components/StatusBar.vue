@@ -1,6 +1,6 @@
 <template>
   <div class="status-bar">
-    <h1>AlChEmY</h1>
+    <h1>Flamel</h1>
     <p>Score: {{ gameState.score }}</p>
     <p>Forge: {{ gameState.forge }} / {{ gameState.maxForges }}</p>
     <p><button @click="discard">Discard</button></p>

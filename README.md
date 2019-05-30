@@ -1,4 +1,4 @@
-# alchemy
+# Flamel
 
 ## Project setup
 ```

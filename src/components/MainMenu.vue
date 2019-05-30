@@ -1,6 +1,6 @@
 <template>
   <div class="main-menu">
-    <h1>AlChEmY</h1>
+    <h1>Flamel</h1>
     <button @click="startGame">Play</button>
   </div>
 </template>
