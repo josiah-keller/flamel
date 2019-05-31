@@ -15,6 +15,8 @@ import GameOverScreen from "./GameOverScreen";
 
 const BOARD_WIDTH = 9;
 const BOARD_HEIGHT = 8;
+const START_SPACE_ROW = 3;
+const START_SPACE_COL = 4;
 
 export default {
   components: {
@@ -50,9 +52,14 @@ export default {
     };
   },
   created() {
-    this.selectNextRune();
+    this.initGame();
   },
   methods: {
+    initGame() {
+      this.boardState.cells[START_SPACE_ROW][START_SPACE_COL].shape = "W";
+
+      this.selectNextRune();
+    },
     selectNextRune() {
       let shapes = "ABCDE".split("");
       let colors = ["red", "blue", "magenta", "green"];
@@ -88,27 +95,34 @@ export default {
         // already a rune there
         return false;
       }
+
+      let foundPopulatedNeighbor = false;
       if (rowIndex > 0) {
         // up
         if (! this.runesCompatible(rune, this.boardState.cells[rowIndex - 1][cellIndex])) return false;
+        if (! this.blankRune(this.boardState.cells[rowIndex - 1][cellIndex])) foundPopulatedNeighbor = true;
       }
       if (rowIndex < BOARD_HEIGHT - 1) {
         // down
         if (! this.runesCompatible(rune, this.boardState.cells[rowIndex + 1][cellIndex])) return false;
+        if (! this.blankRune(this.boardState.cells[rowIndex + 1][cellIndex])) foundPopulatedNeighbor = true;
       }
       if (cellIndex > 0) {
         // left
         if (! this.runesCompatible(rune, this.boardState.cells[rowIndex][cellIndex - 1])) return false;
+        if (! this.blankRune(this.boardState.cells[rowIndex][cellIndex - 1])) foundPopulatedNeighbor = true;
       }
       if (cellIndex < BOARD_WIDTH - 1) {
         // right
         if (! this.runesCompatible(rune, this.boardState.cells[rowIndex][cellIndex + 1])) return false;
+        if (! this.blankRune(this.boardState.cells[rowIndex][cellIndex + 1])) foundPopulatedNeighbor = true;
       }
+      if (! foundPopulatedNeighbor) return false;
+
       return true;
     },
     runesCompatible(rune1, rune2) {
-      // later, will need to account for wildcards
-      return rune1.shape === rune2.shape || rune1.color === rune2.color || this.blankRune(rune1) || this.blankRune(rune2);
+      return rune1.shape === rune2.shape || rune1.color === rune2.color || rune1.shape === "W" || rune2.shape === "W" || this.blankRune(rune1) || this.blankRune(rune2);
     },
     blankRune(rune) {
       return (! rune.shape) && (! rune.color);
