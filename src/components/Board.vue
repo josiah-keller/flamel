@@ -35,11 +35,13 @@ export default {
 
     table {
       border-spacing: 0px;
+      border: 1px solid black;
 
       td {
         border: 1px solid black;
         width: 50px;
         height: 50px;
+        padding: 0px;
       }
     }
   }
