@@ -6,7 +6,7 @@ export default {
     store.dispatch("selectNextRune");
   },
   discard() {
-    store.state.forge += 1;
+    store.dispatch("incrementForge");
     if (store.state.forge > store.state.maxForges) {
       return this.gameOver();
     }
@@ -24,6 +24,10 @@ export default {
         gold: true,
       },
     });
+
+    this.clearFullSpans(rowIndex, cellIndex);
+
+    store.dispatch("decrementForge");
     store.dispatch("selectNextRune");
   },
   moveLegal(rune, rowIndex, cellIndex) {
@@ -71,6 +75,35 @@ export default {
   },
   blankRune(rune) {
     return (! rune.shape) && (! rune.color);
+  },
+  clearFullSpans(rowIndex, cellIndex) {
+    let fullRow = true;
+    for (let i=0; i<Constants.BOARD_WIDTH; i++) {
+      if (! store.state.cells[rowIndex][i].shape) {
+        fullRow = false;
+        break;
+      }
+    }
+    let fullCol = true;
+    for (let i=0; i<Constants.BOARD_HEIGHT; i++) {
+      if (! store.state.cells[i][cellIndex].shape) {
+        fullCol = false;
+        break;
+      }
+    }
+    if (fullRow) {
+      for (let i=0; i<Constants.BOARD_WIDTH; i++) {
+        this.clearCell(rowIndex, i);
+      }
+    }
+    if (fullCol) {
+      for (let i=0; i<Constants.BOARD_HEIGHT; i++) {
+        this.clearCell(i, cellIndex);
+      }
+    }
+  },
+  clearCell(rowIndex, cellIndex) {
+    store.dispatch("clearCell", { rowIndex, cellIndex });
   },
   gameOver() {
     store.dispatch("gameOver");

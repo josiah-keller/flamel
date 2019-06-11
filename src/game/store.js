@@ -38,6 +38,9 @@ export default new Vuex.Store({
       let oldCell = state.cells[rowIndex][cellIndex];
       Object.assign(oldCell, cell);
     },
+    setForge(state, newValue) {
+      state.forge = newValue;
+    },
     gameOver(state) {
       state.isGameOver = true;
     },
@@ -51,6 +54,23 @@ export default new Vuex.Store({
     },
     updateCell({ commit }, payload) {
       commit("updateCell", payload);
+    },
+    clearCell({ dispatch }, { rowIndex, cellIndex }) {
+      dispatch("updateCell", {
+        rowIndex,
+        cellIndex,
+        cell: {
+          shape: null,
+          color: null,
+          gold: true,
+        },
+      });
+    },
+    incrementForge({ state, commit }) {
+      commit("setForge", state.forge + 1);
+    },
+    decrementForge({ state, commit }) {
+      commit("setForge", Math.max(state.forge - 1, 0));
     },
     gameOver({ commit }) {
       commit("gameOver");
