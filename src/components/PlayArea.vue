@@ -1,22 +1,20 @@
 <template>
   <div class="play-area">
-    <StatusBar :gameState="gameState" @discard-requested="discard"/>
-    <Board :boardState="boardState" @cell-clicked="place"/>
+    <StatusBar/>
+    <Board/>
     <PlayerCursor :rune="nextRune"/>
-    <GameOverScreen v-if="gameState.isGameOver" :gameState="gameState"/>
+    <GameOverScreen v-if="isGameOver"/>
   </div>
 </template>
 
 <script>
+import { mapState } from "vuex";
+import Game from "../game/game";
+
 import Board from "./Board";
 import StatusBar from "./StatusBar";
 import PlayerCursor from "./PlayerCursor";
 import GameOverScreen from "./GameOverScreen";
-
-const BOARD_WIDTH = 9;
-const BOARD_HEIGHT = 8;
-const START_SPACE_ROW = 3;
-const START_SPACE_COL = 4;
 
 export default {
   components: {
@@ -25,113 +23,13 @@ export default {
     PlayerCursor,
     GameOverScreen,
   },
-  data() {
-    let cells = [];
-    for(let i=0; i<BOARD_HEIGHT; i++) {
-      cells.push([]);
-      for (let j=0; j<BOARD_WIDTH; j++) {
-        cells[i].push({
-          shape: null,
-          color: null,
-          gold: false,
-        });
-      }
-    }
-    
-    return {
-      gameState: {
-        score: 0,
-        forge: 0,
-        maxForges: 3,
-        isGameOver: false,
-      },
-      boardState: {
-        cells: cells,
-      },
-      nextRune: null,
-    };
+  computed: {
+    ...mapState(["nextRune", "isGameOver"]),
   },
   created() {
-    this.initGame();
+    Game.init();
   },
-  methods: {
-    initGame() {
-      this.boardState.cells[START_SPACE_ROW][START_SPACE_COL].shape = "W";
-
-      this.selectNextRune();
-    },
-    selectNextRune() {
-      let shapes = "ABCDE".split("");
-      let colors = ["red", "blue", "magenta", "green"];
-      this.nextRune = {
-        shape: shapes[Math.floor(Math.random() * shapes.length)],
-        color: colors[Math.floor(Math.random() * colors.length)],
-      };
-    },
-    discard() {
-      this.gameState.forge += 1;
-      if (this.gameState.forge > this.gameState.maxForges) {
-        return this.gameOver();
-      }
-      this.selectNextRune();
-    },
-    place(rowIndex, cellIndex) {
-      if (! this.moveLegal(this.nextRune, rowIndex, cellIndex)) {
-        return;
-      }
-      let cell = this.boardState.cells[rowIndex][cellIndex];
-      cell.shape = this.nextRune.shape;
-      cell.color = this.nextRune.color;
-      cell.gold = true;
-      this.selectNextRune();
-    },
-    moveLegal(rune, rowIndex, cellIndex) {
-      if (rowIndex < 0 || rowIndex >= BOARD_HEIGHT || cellIndex < 0 || cellIndex >= BOARD_WIDTH) {
-        // out of bounds for some reason
-        return false;
-      }
-      let cell = this.boardState.cells[rowIndex][cellIndex];
-      if (cell.shape || cell.color) {
-        // already a rune there
-        return false;
-      }
-
-      let foundPopulatedNeighbor = false;
-      if (rowIndex > 0) {
-        // up
-        if (! this.runesCompatible(rune, this.boardState.cells[rowIndex - 1][cellIndex])) return false;
-        if (! this.blankRune(this.boardState.cells[rowIndex - 1][cellIndex])) foundPopulatedNeighbor = true;
-      }
-      if (rowIndex < BOARD_HEIGHT - 1) {
-        // down
-        if (! this.runesCompatible(rune, this.boardState.cells[rowIndex + 1][cellIndex])) return false;
-        if (! this.blankRune(this.boardState.cells[rowIndex + 1][cellIndex])) foundPopulatedNeighbor = true;
-      }
-      if (cellIndex > 0) {
-        // left
-        if (! this.runesCompatible(rune, this.boardState.cells[rowIndex][cellIndex - 1])) return false;
-        if (! this.blankRune(this.boardState.cells[rowIndex][cellIndex - 1])) foundPopulatedNeighbor = true;
-      }
-      if (cellIndex < BOARD_WIDTH - 1) {
-        // right
-        if (! this.runesCompatible(rune, this.boardState.cells[rowIndex][cellIndex + 1])) return false;
-        if (! this.blankRune(this.boardState.cells[rowIndex][cellIndex + 1])) foundPopulatedNeighbor = true;
-      }
-      if (! foundPopulatedNeighbor) return false;
-
-      return true;
-    },
-    runesCompatible(rune1, rune2) {
-      return rune1.shape === rune2.shape || rune1.color === rune2.color || rune1.shape === "W" || rune2.shape === "W" || this.blankRune(rune1) || this.blankRune(rune2);
-    },
-    blankRune(rune) {
-      return (! rune.shape) && (! rune.color);
-    },
-    gameOver() {
-      this.gameState.isGameOver = true;
-    },
-  },
-}
+};
 </script>
 
 <style lang="scss">

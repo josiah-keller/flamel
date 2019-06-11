@@ -19,7 +19,7 @@ export default {
       this.$emit("clicked");
     },
   },
-}
+};
 </script>
 
 <style lang="scss">

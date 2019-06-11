@@ -1,23 +1,27 @@
 <template>
   <div class="status-bar">
     <h1>Flamel</h1>
-    <p>Score: {{ gameState.score }}</p>
-    <p>Forge: {{ gameState.forge }} / {{ gameState.maxForges }}</p>
+    <p>Score: {{ score }}</p>
+    <p>Forge: {{ forge }} / {{ maxForges }}</p>
     <p><button @click="discard">Discard</button></p>
   </div>
 </template>
 
 <script>
+import { mapState } from "vuex";
+
+import Game from "../game/game";
+
 export default {
-  props: {
-    gameState: Object,
+  computed: {
+    ...mapState(["score", "forge", "maxForges"]),
   },
   methods: {
     discard() {
-      this.$emit("discard-requested");
+      Game.discard();
     }
   },
-}
+};
 </script>
 
 <style>

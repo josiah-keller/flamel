@@ -12,7 +12,7 @@
         alert("foo");
       },
     },
-  }
+  };
 </script>
 
 <style>

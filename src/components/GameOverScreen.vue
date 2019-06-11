@@ -6,10 +6,7 @@
 
 <script>
 export default {
-  props: {
-    gameState: Object,
-  },
-}
+};
 </script>
 
 <style lang="scss">

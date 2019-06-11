@@ -1,7 +1,7 @@
 <template>
   <div class="board">
     <table>
-      <tr v-for="(row, rowIndex) in boardState.cells" :key="rowIndex">
+      <tr v-for="(row, rowIndex) in cells" :key="rowIndex">
         <td v-for="(cell, cellIndex) in row" :key="cellIndex">
           <BoardCell :cell="cell" @clicked="cellClicked(rowIndex, cellIndex)"/>
         </td>
@@ -11,21 +11,24 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
+
 import BoardCell from "./BoardCell";
+import Game from "../game/game";
 
 export default {
   components: {
     BoardCell,
   },
-  props: {
-    boardState: Object,
+  computed: {
+    ...mapState(["cells"]),
   },
   methods: {
     cellClicked(rowIndex, cellIndex) {
-      this.$emit("cell-clicked", rowIndex, cellIndex);
+      Game.place(rowIndex, cellIndex);
     },
   },
-}
+};
 </script>
 
 <style lang="scss">

@@ -10,7 +10,7 @@ export default {
     shape: String,
     color: String,
   },
-}
+};
 </script>
 
 <style lang="scss">
