@@ -16,7 +16,9 @@ for(let i=0; i<Constants.BOARD_HEIGHT; i++) {
     });
   }
 }
-cells[Constants.START_SPACE_ROW][Constants.START_SPACE_COL].shape = "W";
+let startCell = cells[Constants.START_SPACE_ROW][Constants.START_SPACE_COL];
+startCell.shape = "W";
+startCell.gold = true;
 
 export default new Vuex.Store({
   state: {

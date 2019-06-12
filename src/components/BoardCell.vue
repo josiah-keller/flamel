@@ -30,6 +30,10 @@ export default {
 
     &.gold {
       background: #cccc0a;
+
+      &:hover {
+        background: #a5a508;
+      }
     }
 
     &:hover:not(.gold) {
