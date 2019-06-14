@@ -74,6 +74,9 @@ export default new Vuex.Store({
     decrementForge({ state, commit }) {
       commit("setForge", Math.max(state.forge - 1, 0));
     },
+    clearForge({ state, commit }) {
+      commit("setForge", 0);
+    },
     gameOver({ commit }) {
       commit("gameOver");
     },

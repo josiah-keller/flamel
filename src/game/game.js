@@ -101,6 +101,12 @@ export default {
         this.clearCell(i, cellIndex);
       }
     }
+
+    if (fullRow || fullCol) {
+      store.dispatch("clearForge");
+    }
+
+    return fullRow || fullCol;
   },
   clearCell(rowIndex, cellIndex) {
     store.dispatch("clearCell", { rowIndex, cellIndex });
