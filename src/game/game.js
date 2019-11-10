@@ -31,6 +31,8 @@ export default {
 
     this.clearFullSpans(rowIndex, cellIndex);
 
+    this.checkForBoardCleared();
+
     store.dispatch("decrementForge");
     store.dispatch("selectNextRune");
   },
@@ -122,10 +124,26 @@ export default {
 
     return fullRow || fullCol;
   },
+  isBoardAllGold() {
+    for (let row of store.state.cells) {
+      for (let cell of row) {
+        if (! cell.gold) return false;
+      }
+    }
+    return true;
+  },
+  checkForBoardCleared() {
+    if (this.isBoardAllGold()) {
+      this.boardCleared();
+    }
+  },
   clearCell(rowIndex, cellIndex) {
     store.dispatch("clearCell", { rowIndex, cellIndex });
   },
   gameOver() {
     store.dispatch("gameOver");
+  },
+  boardCleared() {
+    store.dispatch("boardCleared");
   },
 };

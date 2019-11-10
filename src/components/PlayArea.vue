@@ -4,6 +4,7 @@
     <Board/>
     <PlayerCursor :rune="nextRune"/>
     <GameOverScreen v-if="isGameOver"/>
+    <BoardClearedScreen v-if="isBoardCleared"/>
   </div>
 </template>
 
@@ -15,6 +16,7 @@ import Board from "./Board";
 import StatusBar from "./StatusBar";
 import PlayerCursor from "./PlayerCursor";
 import GameOverScreen from "./GameOverScreen";
+import BoardClearedScreen from "./BoardClearedScreen";
 
 export default {
   components: {
@@ -22,9 +24,10 @@ export default {
     StatusBar,
     PlayerCursor,
     GameOverScreen,
+    BoardClearedScreen,
   },
   computed: {
-    ...mapState(["nextRune", "isGameOver"]),
+    ...mapState(["nextRune", "isGameOver", "isBoardCleared"]),
   },
   created() {
     Game.init();

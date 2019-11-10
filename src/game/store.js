@@ -29,6 +29,7 @@ export default new Vuex.Store({
     forge: 0,
     maxForges: 3,
     isGameOver: false,
+    isBoardCleared: false,
     cells: cells,
     nextRune: null,
   },
@@ -48,6 +49,9 @@ export default new Vuex.Store({
     },
     gameOver(state) {
       state.isGameOver = true;
+    },
+    boardCleared(state) {
+      state.isBoardCleared = true;
     },
   },
   actions: {
@@ -79,6 +83,9 @@ export default new Vuex.Store({
     },
     gameOver({ commit }) {
       commit("gameOver");
+    },
+    boardCleared({ commit }) {
+      commit("boardCleared");
     },
   },
 });
