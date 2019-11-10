@@ -13,6 +13,10 @@ export default {
     store.dispatch("selectNextRune");
   },
   place(rowIndex, cellIndex) {
+    if (store.state.nextRune.shape === Constants.BOMB_SHAPE) {
+      return this.placeBomb(rowIndex, cellIndex);
+    }
+
     if (! this.moveLegal(store.state.nextRune, rowIndex, cellIndex)) {
       return;
     }
@@ -27,6 +31,11 @@ export default {
 
     this.clearFullSpans(rowIndex, cellIndex);
 
+    store.dispatch("decrementForge");
+    store.dispatch("selectNextRune");
+  },
+  placeBomb(rowIndex, cellIndex) {
+    this.clearCell(rowIndex, cellIndex);
     store.dispatch("decrementForge");
     store.dispatch("selectNextRune");
   },
@@ -71,7 +80,12 @@ export default {
     return true;
   },
   runesCompatible(rune1, rune2) {
-    return rune1.shape === rune2.shape || rune1.color === rune2.color || rune1.shape === "W" || rune2.shape === "W" || this.blankRune(rune1) || this.blankRune(rune2);
+    return rune1.shape === rune2.shape
+      || rune1.color === rune2.color
+      || rune1.shape === Constants.WILD_SHAPE
+      || rune2.shape === Constants.WILD_SHAPE
+      || this.blankRune(rune1)
+      || this.blankRune(rune2);
   },
   blankRune(rune) {
     return (! rune.shape) && (! rune.color);
