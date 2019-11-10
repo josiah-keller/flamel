@@ -16,6 +16,7 @@ export default {
 <style lang="scss">
   .rune {
     font-size: 22px;
+    text-shadow: 0px 0px 5px rgba(0, 0, 0, 0.75);
 
     &.color-red {
       color: red;
@@ -28,6 +29,21 @@ export default {
     }
     &.color-green {
       color: limegreen;
+    }
+    &.color-yellow {
+      color: yellow;
+    }
+    &.color-cyan {
+      color: cyan;
+    }
+    &.color-orange {
+      color: orange;
+    }
+    &.color-white {
+      color: white;
+    }
+    &.color-gray {
+      color: slategray;
     }
   }
 </style>

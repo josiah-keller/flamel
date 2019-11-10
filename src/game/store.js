@@ -2,6 +2,7 @@ import Vue from "vue";
 import Vuex from "vuex";
 
 import Constants from "./constants";
+import Random from "./random";
 
 Vue.use(Vuex);
 
@@ -17,11 +18,13 @@ for(let i=0; i<Constants.BOARD_HEIGHT; i++) {
   }
 }
 let startCell = cells[Constants.START_SPACE_ROW][Constants.START_SPACE_COL];
-startCell.shape = "W";
+startCell.shape = Constants.WILD_SHAPE;
+startCell.color = Constants.SPECIAL_COLOR;
 startCell.gold = true;
 
 export default new Vuex.Store({
   state: {
+    level: 1,
     score: 0,
     forge: 0,
     maxForges: 3,
@@ -48,11 +51,8 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    selectNextRune({ commit }) {
-      commit("setNextRune", {
-        shape: Constants.RUNE_SHAPES[Math.floor(Math.random() * Constants.RUNE_SHAPES.length)],
-        color: Constants.RUNE_COLORS[Math.floor(Math.random() * Constants.RUNE_COLORS.length)],
-      });
+    selectNextRune({ state, commit }) {
+      commit("setNextRune", Random.generateRune(state.level));
     },
     updateCell({ commit }, payload) {
       commit("updateCell", payload);
@@ -74,7 +74,7 @@ export default new Vuex.Store({
     decrementForge({ state, commit }) {
       commit("setForge", Math.max(state.forge - 1, 0));
     },
-    clearForge({ state, commit }) {
+    clearForge({ commit }) {
       commit("setForge", 0);
     },
     gameOver({ commit }) {
