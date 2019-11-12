@@ -7,6 +7,8 @@
 <script>
 import Rune from "./Rune";
 
+const CURSOR_OFFSET = 1;
+
 export default {
   components: {
     Rune,
@@ -18,8 +20,8 @@ export default {
     followMouse: {
       bind(el) {
         document.body.addEventListener("mousemove", e => {
-          el.style.right = `${innerWidth - e.clientX}px`;
-          el.style.bottom = `${innerHeight - e.clientY}px`;
+          el.style.right = `${innerWidth - e.clientX + CURSOR_OFFSET}px`;
+          el.style.bottom = `${innerHeight - e.clientY + CURSOR_OFFSET}px`;
         });
       }
     },
