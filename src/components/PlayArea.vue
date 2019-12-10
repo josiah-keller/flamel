@@ -2,7 +2,7 @@
   <div class="play-area">
     <StatusBar/>
     <Board/>
-    <PlayerCursor :rune="nextRune"/>
+    <PlayerCursor :rune="nextRune" :showIllegalIndicator="showIllegalIndicator"/>
     <GameOverScreen v-if="isGameOver"/>
     <BoardClearedScreen v-if="isBoardCleared"/>
   </div>
@@ -11,6 +11,7 @@
 <script>
 import { mapState } from "vuex";
 import Game from "../game/game";
+import store from "../game/store";
 
 import Board from "./Board";
 import StatusBar from "./StatusBar";
@@ -28,6 +29,9 @@ export default {
   },
   computed: {
     ...mapState(["nextRune", "isGameOver", "isBoardCleared"]),
+    showIllegalIndicator() {
+      return !Game.anyMoveLegal(store.state.nextRune);
+    },
   },
   created() {
     Game.init();

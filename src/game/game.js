@@ -92,6 +92,14 @@ export default {
   blankRune(rune) {
     return (! rune.shape) && (! rune.color);
   },
+  anyMoveLegal(rune) {
+    for (let rowIndex=0; rowIndex<Constants.BOARD_HEIGHT; rowIndex++) {
+      for (let cellIndex=0; cellIndex<Constants.BOARD_WIDTH; cellIndex++) {
+        if (this.moveLegal(rune, rowIndex, cellIndex)) return true;
+      }
+    }
+    return false;
+  },
   clearFullSpans(rowIndex, cellIndex) {
     let fullRow = true;
     for (let i=0; i<Constants.BOARD_WIDTH; i++) {
