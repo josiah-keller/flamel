@@ -1,5 +1,5 @@
 <template>
-  <div class="play-area">
+  <div class="play-area" @contextmenu="discard($event)">
     <StatusBar/>
     <Board/>
     <PlayerCursor :rune="nextRune" :showIllegalIndicator="showIllegalIndicator"/>
@@ -31,6 +31,12 @@ export default {
     ...mapState(["nextRune", "isGameOver", "isBoardCleared"]),
     showIllegalIndicator() {
       return !Game.anyMoveLegal(store.state.nextRune);
+    },
+  },
+  methods: {
+    discard(e) {
+      e.preventDefault();
+      Game.discard();
     },
   },
   created() {
