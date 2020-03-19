@@ -12,8 +12,12 @@ export default {
     }
     store.dispatch("selectNextRune");
   },
+  cellOccupied(rowIndex, cellIndex) {
+    let cell = store.state.cells[rowIndex][cellIndex];
+    return cell.shape || cell.color;
+  },
   place(rowIndex, cellIndex) {
-    if (store.state.nextRune.shape === Constants.BOMB_SHAPE) {
+    if (store.state.nextRune.shape === Constants.BOMB_SHAPE && this.cellOccupied(rowIndex, cellIndex)) {
       return this.placeBomb(rowIndex, cellIndex);
     }
 
@@ -50,8 +54,7 @@ export default {
       // out of bounds for some reason
       return false;
     }
-    let cell = store.state.cells[rowIndex][cellIndex];
-    if (cell.shape || cell.color) {
+    if (this.cellOccupied(rowIndex, cellIndex)) {
       // already a rune there
       return false;
     }
