@@ -96,6 +96,10 @@ export default {
     return (! rune.shape) && (! rune.color);
   },
   anyMoveLegal(rune) {
+    if (rune.shape == Constants.BOMB_SHAPE) {
+      // if bomb, it should play (board should never be completely blank...)
+      return true;
+    }
     for (let rowIndex=0; rowIndex<Constants.BOARD_HEIGHT; rowIndex++) {
       for (let cellIndex=0; cellIndex<Constants.BOARD_WIDTH; cellIndex++) {
         if (this.moveLegal(rune, rowIndex, cellIndex)) return true;
