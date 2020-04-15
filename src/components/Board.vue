@@ -3,7 +3,10 @@
     <table>
       <tr v-for="(row, rowIndex) in cells" :key="rowIndex">
         <td v-for="(cell, cellIndex) in row" :key="cellIndex">
-          <BoardCell :cell="cell" @clicked="cellClicked(rowIndex, cellIndex)"/>
+          <BoardCell
+            :cell="cell"
+            :playable="cellPlayable(rowIndex, cellIndex)"
+            @clicked="cellClicked(rowIndex, cellIndex)"/>
         </td>
       </tr>
     </table>
@@ -15,6 +18,7 @@ import { mapState } from "vuex";
 
 import BoardCell from "./BoardCell";
 import Game from "../game/game";
+import store from "../game/store";
 
 export default {
   components: {
@@ -26,6 +30,9 @@ export default {
   methods: {
     cellClicked(rowIndex, cellIndex) {
       Game.place(rowIndex, cellIndex);
+    },
+    cellPlayable(rowIndex, cellIndex) {
+      return Game.moveLegal(store.state.nextRune, rowIndex, cellIndex);
     },
   },
 };

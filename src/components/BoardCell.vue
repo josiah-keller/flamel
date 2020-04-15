@@ -1,5 +1,5 @@
 <template>
-  <div class="board-cell" :class="{ 'gold': cell.gold }" @click="clicked">
+  <div class="board-cell" :class="{ 'gold': cell.gold, 'playable': playable }" @click="clicked">
     <Rune :shape="cell.shape" :color="cell.color"/>
   </div>
 </template>
@@ -13,6 +13,7 @@ export default {
   },
   props: {
     cell: Object,
+    playable: Boolean,
   },
   methods: {
     clicked() {
@@ -31,12 +32,12 @@ export default {
     &.gold {
       background: #cccc0a;
 
-      &:hover {
+      &.playable:hover {
         background: #a5a508;
       }
     }
 
-    &:hover:not(.gold) {
+    &.playable:hover:not(.gold) {
       background: #aaa;
     }
   }
