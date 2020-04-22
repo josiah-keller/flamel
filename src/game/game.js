@@ -35,6 +35,8 @@ export default {
 
     this.clearFullSpans(rowIndex, cellIndex);
 
+    this.checkForBlankBoard();
+
     this.checkForBoardCleared();
 
     store.dispatch("decrementForge");
@@ -42,6 +44,7 @@ export default {
   },
   placeBomb(rowIndex, cellIndex) {
     this.clearCell(rowIndex, cellIndex);
+    this.checkForBlankBoard();
     store.dispatch("decrementForge");
     store.dispatch("selectNextRune");
   },
@@ -150,6 +153,19 @@ export default {
   checkForBoardCleared() {
     if (this.isBoardAllGold()) {
       this.boardCleared();
+    }
+  },
+  isBoardAllBlank() {
+    for (let row of store.state.cells) {
+      for (let cell of row) {
+        if (! this.blankRune(cell)) return false;
+      }
+    }
+    return true;
+  },
+  checkForBlankBoard() {
+    if (this.isBoardAllBlank()) {
+      this.gameOver();
     }
   },
   clearCell(rowIndex, cellIndex) {
