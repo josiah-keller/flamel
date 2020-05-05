@@ -26,7 +26,7 @@ function draw(pool, threshold) {
 /**
  * Given an array of fractional numbers representing probabilities of mutually
  * exclusive events, choose one at random and return its index in the array.
- * Return -1 if the probabilities do not add up to 1 and none of the events
+ * Return -1 if the probabilities do not add up to 1 or if none of the events
  * are chosen.
  * @param {Array<Number>} probabilities 
  */
