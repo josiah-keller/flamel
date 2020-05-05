@@ -17,8 +17,12 @@ export default {
     return cell.shape || cell.color;
   },
   place(rowIndex, cellIndex) {
-    if (store.state.nextRune.shape === Constants.BOMB_SHAPE && this.cellOccupied(rowIndex, cellIndex)) {
-      return this.placeBomb(rowIndex, cellIndex);
+    if (store.state.nextRune.shape === Constants.BOMB_SHAPE) {
+      if (this.cellOccupied(rowIndex, cellIndex)) {
+        return this.placeBomb(rowIndex, cellIndex);
+      } else {
+        return;
+      }
     }
 
     if (! this.moveLegal(store.state.nextRune, rowIndex, cellIndex)) {
