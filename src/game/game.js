@@ -24,6 +24,9 @@ export default {
     if (! this.moveLegal(store.state.nextRune, rowIndex, cellIndex)) {
       return;
     }
+
+    let wasCellGold = store.state.cells[rowIndex][cellIndex].gold;
+
     store.dispatch("updateCell", {
       rowIndex,
       cellIndex,
@@ -33,7 +36,10 @@ export default {
       },
     });
 
-    this.clearFullSpans(rowIndex, cellIndex);
+    let adjacency = this.countAdjacency(rowIndex, cellIndex);
+    let spansCleared = this.clearFullSpans(rowIndex, cellIndex);
+    let score = this.scoreMove(wasCellGold, adjacency, spansCleared);
+    store.dispatch("incrementScore", score);
 
     this.checkForBlankBoard();
 
@@ -47,6 +53,48 @@ export default {
     this.checkForBlankBoard();
     store.dispatch("decrementForge");
     store.dispatch("selectNextRune");
+  },
+  scoreMove(wasCellGold, adjacency, spansCleared) {
+    let score = 0,
+      valueSet = Constants.ScoreValues.PlacementBaseScores.NonGold,
+      clearSpanBonusSet = Constants.ScoreValues.ClearSpanBonus.NonGold;
+    if (wasCellGold) {
+      valueSet = Constants.ScoreValues.PlacementBaseScores.Gold;
+      clearSpanBonusSet = Constants.ScoreValues.ClearSpanBonus.Gold;
+    }
+    console.log(wasCellGold, adjacency, spansCleared);
+    console.log(valueSet, clearSpanBonusSet);
+    score = valueSet[adjacency] + clearSpanBonusSet[spansCleared];
+    score *= Constants.ScoreValues.DIFFICULTY_MULTIPLIERS[store.state.difficulty]
+    return score;
+  },
+  countAdjacency(rowIndex, cellIndex) {
+    if (rowIndex < 0 ||
+        rowIndex >= Constants.BOARD_HEIGHT ||
+        cellIndex < 0 ||
+        cellIndex >= Constants.BOARD_WIDTH) {
+
+      // out of bounds for some reason
+      return false;
+    }
+    let adjacency = 0;
+    if (rowIndex > 0) {
+      // up
+      if (! this.blankRune(store.state.cells[rowIndex - 1][cellIndex])) adjacency += 1;
+    }
+    if (rowIndex < Constants.BOARD_HEIGHT - 1) {
+      // down
+      if (! this.blankRune(store.state.cells[rowIndex + 1][cellIndex])) adjacency += 1;
+    }
+    if (cellIndex > 0) {
+      // left
+      if (! this.blankRune(store.state.cells[rowIndex][cellIndex - 1])) adjacency += 1;
+    }
+    if (cellIndex < Constants.BOARD_WIDTH - 1) {
+      // right
+      if (! this.blankRune(store.state.cells[rowIndex][cellIndex + 1])) adjacency += 1;
+    }
+    return adjacency;
   },
   moveLegal(rune, rowIndex, cellIndex) {
     if (rowIndex < 0 ||
@@ -140,7 +188,12 @@ export default {
       store.dispatch("clearForge");
     }
 
-    return fullRow || fullCol;
+    if (fullRow && fullCol) {
+      return 2;
+    } else if (fullRow || fullCol) {
+      return 1;
+    }
+    return 0;
   },
   isBoardAllGold() {
     for (let row of store.state.cells) {

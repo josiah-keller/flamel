@@ -1,4 +1,4 @@
-export default {
+const Constants = {
   BOARD_WIDTH: 9,
   BOARD_HEIGHT: 8,
   START_SPACE_ROW: 3,
@@ -14,6 +14,11 @@ export default {
     "yellow", "cyan", "orange", "white", "gray",
   ],
 
+  Difficulties: {
+    EASY: 0,
+    MEDIUM: 1,
+    HARD: 2,
+  },
   Probabilities: {
     // Determined empirically by watching a few YouTube videos; may not be accurate
     DRAW_WILD: 0.025,
@@ -21,17 +26,36 @@ export default {
   },
   ScoreValues: {
     // Observed from a small sample of YouTube videos; didn't observe every possible scenario
-    // To be multiplied by a factor for the difficulty setting
-    SINGLE_ADJACENT: 5,
-    DOUBLE_ADJACENT: 15,
-    TRIPLE_ADJACENT: 30,
-    QUAD_ADJACENT: 60, // a guess
-    GOLD_SINGLE_ADJACENT: 1,
-    GOLD_DOUBLE_ADJACENT: 2,
-    GOLD_TRIPLE_ADJACENT: 3, // a guess
-    GOLD_QUAD_ADJACENT: 4, // a guess
-    CLEAR_ROW: 50,
-    GOLD_CLEAR_ROW: 5,
+    // See NOTES.md file for more details
+    DIFFICULTY_MULTIPLIERS: [1, 2, 4],
+    PlacementBaseScores: {
+      // keys of these objects are the "adjacency" of the move
+      Gold: {
+        1: 1,
+        2: 2,
+        3: 3,
+        4: 4,
+      },
+      NonGold: {
+        1: 5,
+        2: 15,
+        3: 30,
+        4: 50,
+      },
+    },
+    ClearSpanBonus: {
+      // keys of these objects are the number of rows that were cleared
+      Gold: {
+        0: 0,
+        1: 5,
+        2: 30, // a guess
+      },
+      NonGold: {
+        0: 0,
+        1: 50,
+        2: 300,
+      },
+    },
   },
   LevelThresholds: {
     // Map a level number (index) to a length for the subset of the RUNE_SHAPES/RUNE_COLORS arrays to be drawn from
@@ -86,3 +110,4 @@ export default {
     ]
   }
 };
+export default Constants;

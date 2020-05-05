@@ -32,6 +32,7 @@ export default new Vuex.Store({
     isBoardCleared: false,
     cells: cells,
     nextRune: null,
+    difficulty: Constants.Difficulties.MEDIUM,
   },
   mutations: {
     setNextRune(state, nextRune) {
@@ -52,6 +53,9 @@ export default new Vuex.Store({
     },
     boardCleared(state) {
       state.isBoardCleared = true;
+    },
+    setScore(state, newValue) {
+      state.score = newValue;
     },
   },
   actions: {
@@ -86,6 +90,9 @@ export default new Vuex.Store({
     },
     boardCleared({ commit }) {
       commit("boardCleared");
+    },
+    incrementScore({ state, commit }, increment) {
+      commit("setScore", state.score + increment);
     },
   },
 });
