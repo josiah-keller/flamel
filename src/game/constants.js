@@ -64,6 +64,8 @@ const Constants = {
         2: 300,
       },
     },
+    CLEAR_BOARD_BASE: 500,
+    CLEAR_BOARD_INCREMENT: 125,
   },
   LevelThresholds: {
     // Map a level number (index) to a length for the subset of the RUNE_SHAPES/RUNE_COLORS arrays to be drawn from

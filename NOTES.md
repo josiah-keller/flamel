@@ -56,3 +56,29 @@ points   multiplier    4x adjacent   bonus
 Solving for _x_ would put the bonus at 250 points, which would be five times the normal span bonus.  This seems unlikely.  Perhaps it's 50 points for one span and 200 points for a second span.  For the time being, this is the best guess I can make.  If I find more information, this calculation may be changed.
 
 After adding the move's score plus any applicable span clearing bonus, the sum is then multiplied by the _scoring multiplier_ that is set by the current difficulty setting.  Naturally, this causes players who choose a higher difficulty to be rewarded with more points.
+
+### Level completion bonus
+After clearing a level, the player's score increases by a given bonus. Following are the observations I have made in trying to determine how this bonus is calculated:
+
+Observations from https://www.youtube.com/watch?v=p902uQ_y3r4&list=PLc8oN3IpUSFqFqUydpekoPphq_hloHucX&index=1
+
+| Difficulty | Level # | Bonus after completing |
+|------------|---------|------------------------|
+| Easy       | 1       | 500                    |
+| Easy       | 2       | 625                    |
+| Easy       | 3       | 750                    |
+| Easy       | 4       | 875                    |
+
+Observations from https://www.youtube.com/watch?v=woNAkHlYtzI&list=PLc8oN3IpUSFqFqUydpekoPphq_hloHucX&index=2
+| Difficulty | Level # | Bonus after completing |
+|------------|---------|------------------------|
+| Medium     | 6       | 1000                   |
+| Medium     | 7       | 1250                   |
+
+Based on this data it appears the level completion bonus is calculated as follows:
+
+```
+(500 + 125n) * m
+```
+
+where _n_ is the number of levels that the player has completed and _m_ is the scoring multiplier. Note that _n_ can be calculated by subtracting the current level from the starting level for the difficulty setting, hence there is no need for additional bookkeeping.

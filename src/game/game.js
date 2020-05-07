@@ -90,6 +90,12 @@ export default {
     score *= Constants.ScoreValues.DIFFICULTY_MULTIPLIERS[store.state.difficulty]
     return score;
   },
+  scoreBoardClear() {
+    let boardsCompleted = store.state.level - Constants.STARTING_LEVELS[store.state.difficulty],
+      multiplier = Constants.ScoreValues.DIFFICULTY_MULTIPLIERS[store.state.difficulty];
+    return (Constants.ScoreValues.CLEAR_BOARD_BASE +
+      (Constants.ScoreValues.CLEAR_BOARD_INCREMENT * boardsCompleted)) * multiplier;
+  },
   countAdjacency(rowIndex, cellIndex) {
     if (rowIndex < 0 ||
         rowIndex >= Constants.BOARD_HEIGHT ||
@@ -255,6 +261,8 @@ export default {
     store.dispatch("gameOver");
   },
   boardCleared() {
+    let score = this.scoreBoardClear();
+    store.dispatch("incrementScore", score);
     store.dispatch("boardCleared");
   },
 };
