@@ -14,6 +14,12 @@ const Constants = {
     "yellow", "cyan", "orange", "white", "gray",
   ],
 
+  STARTING_LEVELS: [
+    1,  // Easy
+    6,  // Medium
+    11, // Hard
+  ],
+
   Difficulties: {
     EASY: 0,
     MEDIUM: 1,
@@ -31,12 +37,14 @@ const Constants = {
     PlacementBaseScores: {
       // keys of these objects are the "adjacency" of the move
       Gold: {
+        0: 1, // this case probably shouldn't ever occur
         1: 1,
         2: 2,
         3: 3,
         4: 4,
       },
       NonGold: {
+        0: 5, // this case will occur on the first move of a new board
         1: 5,
         2: 15,
         3: 30,

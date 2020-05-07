@@ -39,9 +39,6 @@ export default {
       Game.discard();
     },
   },
-  created() {
-    Game.init();
-  },
 };
 </script>
 

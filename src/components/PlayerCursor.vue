@@ -34,6 +34,7 @@ export default {
 <style lang="scss">
   .player-cursor {
     position: fixed;
+    z-index: 99;
   }
   .illegal-indicator {
     box-sizing: border-box;

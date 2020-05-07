@@ -6,35 +6,24 @@ import Random from "./random";
 
 Vue.use(Vuex);
 
-let cells = [];
-for(let i=0; i<Constants.BOARD_HEIGHT; i++) {
-  cells.push([]);
-  for (let j=0; j<Constants.BOARD_WIDTH; j++) {
-    cells[i].push({
-      shape: null,
-      color: null,
-      gold: false,
-    });
-  }
-}
-let startCell = cells[Constants.START_SPACE_ROW][Constants.START_SPACE_COL];
-startCell.shape = Constants.WILD_SHAPE;
-startCell.color = Constants.SPECIAL_COLOR;
-startCell.gold = true;
-
 export default new Vuex.Store({
   state: {
     level: 1,
     score: 0,
     forge: 0,
     maxForges: 3,
+    isGameInitialized: false,
+    isGameActive: false,
     isGameOver: false,
     isBoardCleared: false,
-    cells: cells,
+    cells: [],
     nextRune: null,
     difficulty: Constants.Difficulties.MEDIUM,
   },
   mutations: {
+    setCells(state, cells) {
+      state.cells = cells;
+    },
     setNextRune(state, nextRune) {
       state.nextRune = nextRune;
     },
@@ -51,16 +40,63 @@ export default new Vuex.Store({
     gameOver(state) {
       state.isGameOver = true;
     },
+    gameUnover(state) {
+      state.isGameOver = false;
+    },
     boardCleared(state) {
       state.isBoardCleared = true;
+    },
+    boardUncleared(state) {
+      state.isBoardCleared = false;
+    },
+    gameInitialized(state) {
+      state.isGameInitialized = true;
+    },
+    gameActive(state) {
+      state.isGameActive = true;
+    },
+    gameInactive(state) {
+      state.isGameActive = false;
     },
     setScore(state, newValue) {
       state.score = newValue;
     },
+    setLevel(state, newValue) {
+      state.level = newValue;
+    },
+    setDifficulty(state, newValue) {
+      state.difficulty = newValue;
+    },
   },
   actions: {
+    initializeBoard({ commit }) {
+      let cells = [];
+      for(let i=0; i<Constants.BOARD_HEIGHT; i++) {
+        cells.push([]);
+        for (let j=0; j<Constants.BOARD_WIDTH; j++) {
+          cells[i].push({
+            shape: null,
+            color: null,
+            gold: false,
+          });
+        }
+      }
+      commit("setCells", cells);
+      commit("gameUnover");
+      commit("boardUncleared");
+    },
+    newGame({ commit }) {
+      commit("setScore", 0);
+      commit("setForge", 0);
+    },
     selectNextRune({ state, commit }) {
       commit("setNextRune", Random.generateRune(state.level));
+    },
+    setWildRune({ commit }) {
+      commit("setNextRune", {
+        shape: Constants.WILD_SHAPE,
+        color: Constants.SPECIAL_COLOR,
+      });
     },
     updateCell({ commit }, payload) {
       commit("updateCell", payload);
@@ -91,8 +127,29 @@ export default new Vuex.Store({
     boardCleared({ commit }) {
       commit("boardCleared");
     },
+    boardUncleared({ commit }) {
+      commit("boardUncleared");
+    },
+    gameInitialized({ commit }) {
+      commit("gameInitialized");
+    },
+    gameActive({ commit }) {
+      commit("gameActive");
+    },
+    gameInactive({ commit }) {
+      commit("gameInactive");
+    },
     incrementScore({ state, commit }, increment) {
       commit("setScore", state.score + increment);
+    },
+    setLevel({ commit }, newValue) {
+      commit("setLevel", newValue);
+    },
+    incrementLevel({ state, commit }) {
+      commit("setLevel", state.level + 1);
+    },
+    setDifficulty({ commit }, newValue) {
+      commit("setDifficulty", newValue);
     },
   },
 });

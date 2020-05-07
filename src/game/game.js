@@ -3,7 +3,27 @@ import Constants from "./constants";
 
 export default {
   init() {
+    store.dispatch("initializeBoard");
+    store.dispatch("newGame");
+    store.dispatch("setLevel", Constants.STARTING_LEVELS[store.state.difficulty]);
+    store.dispatch("updateCell", {
+      rowIndex: Constants.START_SPACE_ROW,
+      cellIndex: Constants.START_SPACE_COL,
+      cell: {
+        shape: Constants.WILD_SHAPE,
+        color: Constants.SPECIAL_COLOR,
+        gold: true,
+      },
+    });
     store.dispatch("selectNextRune");
+    store.dispatch("gameInitialized");
+    store.dispatch("gameActive");
+  },
+  nextLevel() {
+    store.dispatch("initializeBoard");
+    store.dispatch("incrementLevel");
+    store.dispatch("setWildRune");
+    store.dispatch("boardUncleared");
   },
   discard() {
     store.dispatch("incrementForge");
@@ -66,8 +86,6 @@ export default {
       valueSet = Constants.ScoreValues.PlacementBaseScores.Gold;
       clearSpanBonusSet = Constants.ScoreValues.ClearSpanBonus.Gold;
     }
-    console.log(wasCellGold, adjacency, spansCleared);
-    console.log(valueSet, clearSpanBonusSet);
     score = valueSet[adjacency] + clearSpanBonusSet[spansCleared];
     score *= Constants.ScoreValues.DIFFICULTY_MULTIPLIERS[store.state.difficulty]
     return score;
@@ -112,6 +130,11 @@ export default {
     if (this.cellOccupied(rowIndex, cellIndex)) {
       // already a rune there
       return false;
+    }
+
+    // Special case for first move of a new board
+    if (this.isBoardAllBlank() && rune.shape === Constants.WILD_SHAPE) {
+      return true;
     }
 
     let foundPopulatedNeighbor = false;
