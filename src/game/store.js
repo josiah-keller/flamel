@@ -19,6 +19,10 @@ export default new Vuex.Store({
     cells: [],
     nextRune: null,
     difficulty: Constants.Difficulties.MEDIUM,
+    timeAccumulator: 0,
+    startTime: null,
+    runCount: 0,
+    maxRun: 0,
   },
   mutations: {
     setCells(state, cells) {
@@ -66,6 +70,18 @@ export default new Vuex.Store({
     },
     setDifficulty(state, newValue) {
       state.difficulty = newValue;
+    },
+    setStartTime(state, startTime) {
+      state.startTime = startTime;
+    },
+    setTimeAccumulator(state, newValue) {
+      state.timeAccumulator = newValue;
+    },
+    setRunCount(state, newValue) {
+      state.runCount = newValue;
+      if (state.runCount > state.maxRun) {
+        state.maxRun = state.runCount;
+      }
     },
   },
   actions: {
@@ -151,5 +167,22 @@ export default new Vuex.Store({
     setDifficulty({ commit }, newValue) {
       commit("setDifficulty", newValue);
     },
+    startClock({ commit }) {
+      commit("setStartTime", new Date());
+    },
+    pauseClock({ state, commit }) {
+      let now = new Date(),
+        timeDelta = now.getTime() - state.startTime.getTime();
+      commit("setTimeAccumulator", state.timeAccumulator + timeDelta);
+    },
+    resetClock({ commit }) {
+      commit("setTimeAccumulator", 0);
+    },
+    updateRunCount({ state, commit }) {
+      commit("setRunCount", state.runCount + 1);
+    },
+    resetRunCount({ commit }) {
+      commit("setRunCount", 0);
+    }
   },
 });

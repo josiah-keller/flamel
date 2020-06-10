@@ -18,15 +18,19 @@ export default {
     store.dispatch("selectNextRune");
     store.dispatch("gameInitialized");
     store.dispatch("gameActive");
+    store.dispatch("resetClock");
+    store.dispatch("startClock");
   },
   nextLevel() {
     store.dispatch("initializeBoard");
     store.dispatch("incrementLevel");
     store.dispatch("setWildRune");
     store.dispatch("boardUncleared");
+    store.dispatch("startClock");
   },
   discard() {
     store.dispatch("incrementForge");
+    store.dispatch("resetRunCount");
     if (store.state.forge > store.state.maxForges) {
       return this.gameOver();
     }
@@ -69,6 +73,7 @@ export default {
 
     this.checkForBoardCleared();
 
+    store.dispatch("updateRunCount");
     store.dispatch("decrementForge");
     store.dispatch("selectNextRune");
   },
@@ -263,6 +268,7 @@ export default {
   boardCleared() {
     let score = this.scoreBoardClear();
     store.dispatch("incrementScore", score);
+    store.dispatch("pauseClock");
     store.dispatch("boardCleared");
   },
 };
