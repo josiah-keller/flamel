@@ -1,7 +1,11 @@
-import store from "./store";
-import Constants from "./constants";
+import Constants from "@/game/constants";
+
+let store = null;
 
 export default {
+  setStore(newStore) {
+    store = newStore;
+  },
   init() {
     store.dispatch("initializeBoard");
     store.dispatch("newGame");
