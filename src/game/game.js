@@ -42,7 +42,7 @@ export default {
   },
   cellOccupied(rowIndex, cellIndex) {
     let cell = store.state.cells[rowIndex][cellIndex];
-    return cell.shape || cell.color;
+    return !!(cell.shape || cell.color);
   },
   place(rowIndex, cellIndex) {
     if (store.state.nextRune.shape === Constants.BOMB_SHAPE) {

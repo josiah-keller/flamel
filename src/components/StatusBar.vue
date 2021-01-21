@@ -7,6 +7,7 @@
     <p>Score: {{ score }}</p>
     <p>Forge: {{ forge }} / {{ maxForges }}</p>
     <p><button @click="discard">Discard</button></p>
+    <p><button @click="dumpState">Dump State JSON to Console</button></p>
   </div>
 </template>
 
@@ -26,6 +27,9 @@ export default {
     },
     returnToMainMenu() {
       store.dispatch("gameInactive");
+    },
+    dumpState() {
+      console.log(JSON.stringify(store.state));
     },
   },
 };
