@@ -4,11 +4,12 @@ const Constants = {
   START_SPACE_ROW: 3,
   START_SPACE_COL: 4,
 
-  SPECIAL_COLOR: "black",
+  SPECIAL_COLOR: "special",
   WILD_SHAPE: "W",
   BOMB_SHAPE: "%",
 
-  RUNE_SHAPES: "ABCDEFGHIJKLMNOPQRSTUV".split(""),
+  // RUNE_SHAPES: "ABCDEFGHIJKLMNOPQRSTUV".split(""),
+  RUNE_SHAPES: "∞MΣλ※ΩVI‡ωδΨΔCπβЖX§Φµ".split(""),
   RUNE_COLORS: [
     "red", "blue", "magenta", "green",
     "yellow", "cyan", "orange", "white", "gray",

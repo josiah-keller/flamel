@@ -28,6 +28,8 @@ export default {
     width: 100%;
     height: 100%;
     text-align: center;
+    line-height: 50px;
+    vertical-align: middle;
 
     &.gold {
       background: #cccc0a;
