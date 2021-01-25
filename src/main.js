@@ -6,6 +6,9 @@ import Game from "@/game/game";
 
 import App from "@/App.vue";
 
+import "@/fonts.scss";
+import "@/global.scss";
+
 Vue.config.productionTip = false;
 
 Game.setStore(store);
