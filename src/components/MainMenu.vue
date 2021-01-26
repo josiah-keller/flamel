@@ -59,43 +59,16 @@ export default {
 </script>
 
 <style lang="scss">
+  @import "@/global.scss";
+
   .main-menu {
-    position: absolute;
-    left: 0px;
-    top: 0px;
-    width: 100%;
-    height: 100%;
-    background-color: #0f0f0f;
-    background-image: url("../assets/menu-texture-1.png");
-    background-size: cover;
+    @include backdrop-container;
     z-index: 101;
     font-family: "Fraunces", "Times New Roman", serif;
     user-select: none;
 
     .main-menu-wrapper {
-      box-sizing: border-box;
-      padding: 20px;
-      background-color: rgb(124, 121, 119);
-      background-image: linear-gradient(to top, rgb(116, 111, 108), rgb(151, 148, 146));
-      border-radius: 10px;
-      box-shadow: 0px 3px 0px rgb(31, 30, 29), 0px 0px 50px rgba(0, 0, 0, 0.3);
-      position: absolute;
-      width: 50%;
-      height: 75%;
-      left: 25%;
-      top: 12.5%;
-      text-align: center;
-
-      &::after {
-        content: ' ';
-        position: absolute;
-        left: 10px;
-        top: 10px;
-        width: 50px;
-        height: 20px;
-        background: rgba(255, 255, 255, 0.06);
-        border-radius: 10px;
-      }
+      @include menu-wrapper;
 
       .difficulty-select {
         margin-top: 50px;
@@ -128,23 +101,13 @@ export default {
         margin-top: 50px;
 
         button {
-          color: rgba(255, 255, 255, 0.6);
-          font-size: 22px;
-          font-family: "Fraunces", "Times New Roman", serif;
-          text-transform: uppercase;
-          margin: 0 5px;
-          padding: 10px 40px;
-          border: 1px solid rgb(8, 80, 99);
-          border-radius: 30px;
+          @include gloss-button-base;
+          border-color: rgb(8, 80, 99);
           background-color: rgb(8, 80, 99);
           background-image: linear-gradient(to top, rgb(11, 159, 196) 0%, rgb(8, 76, 94) 30%, rgb(5, 56, 68) 49.9999%, rgb(8, 81, 99) 50%, rgb(12, 134, 165) 100%);
-          box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5) inset, 0px 0px 10px rgba(0, 0, 0, 0.25);
-          cursor: pointer;
-
           transition: box-shadow 0.1s linear;
 
           &:hover {
-            color: rgba(255, 255, 255, 0.8);
             box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5) inset, 0px 0px 10px rgba(0, 0, 0, 0.25), 0px 0px 20px rgb(8, 80, 99);
           }
         }

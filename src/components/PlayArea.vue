@@ -43,7 +43,10 @@ export default {
 </script>
 
 <style lang="scss">
+  @import "@/global.scss";
+
   .play-area {
+    @include backdrop-container;
     user-select: none;
     cursor: default;
     display: flex;
