@@ -97,33 +97,6 @@ export default {
         border-radius: 10px;
       }
 
-      .logo {
-        font-weight: normal;
-        color: #646407;
-        background-color: #9c9c08;
-        background-image: linear-gradient(to top, #9c9c08 0%, #a8a812 49.9999%, #b1b115 50%, #d6d619 100%);
-        text-transform: uppercase;
-        margin: 0px;
-        display: inline-block;
-        font-size: 52px;
-        padding: 5px 10px;
-        text-shadow: 0px -1px #2c2c03;
-        border-radius: 3px;
-        box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25);
-        position: relative;
-
-        &::after {
-          content: ' ';
-          position: absolute;
-          left: 5px;
-          top: 3px;
-          width: 20px;
-          height: 6px;
-          background: rgba(255, 255, 255, 0.15);
-          border-radius: 3px;
-        }
-      }
-
       .difficulty-select {
         margin-top: 50px;
 

@@ -1,6 +1,8 @@
 <template>
   <div class="status-bar">
-    <h1>Flamel</h1>
+    <div class="logo-wrapper">
+      <h1 class="logo" v-sparkle>Flamel</h1>
+    </div>
     <p><button @click="returnToMainMenu()">Main Menu</button></p>
     <p>Difficulty: {{ ["Easy", "Medium", "Hard"][difficulty] }}</p>
     <p>Level: {{ level }}</p>
@@ -35,9 +37,14 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
   .status-bar {
     flex: 0 0 300px;
     background: #ccc;
+
+    .logo-wrapper {
+      text-align: center;
+      margin-top: 20px;
+    }
   }
 </style>
