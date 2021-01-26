@@ -18,6 +18,7 @@ Vue.directive("sparkle", {
     el.dataset.minInterval = options.minInterval;
     el.dataset.maxInterval = options.maxInterval;
     el.dataset.edgeSpillage = options.edgeSpillage;
+    el.dataset.sparkleKill = false;
 
     if (! el.style.position) {
       el.style.position = "relative";
@@ -27,12 +28,12 @@ Vue.directive("sparkle", {
       const maxParticles = parseInt(el.dataset.maxParticles),
         minInterval = parseInt(el.dataset.minInterval),
         maxInterval = parseInt(el.dataset.maxInterval),
-        edgeSpillage = parseInt(el.dataset.edgeSpillage);
+        edgeSpillage = parseInt(el.dataset.edgeSpillage),
+        sparkleKill = el.dataset.sparkleKill === "true";
 
       const particleCount = el.querySelectorAll(".sparkle-particle").length;
       if (particleCount < maxParticles) {
         let newParticles = Math.floor(Math.round(randomInterval(0, maxParticles - particleCount)) / 2);
-        console.log(maxParticles, newParticles);
         while (newParticles--) {
           let particle = document.createElement("div");
           particle.setAttribute("class", "sparkle-particle");
@@ -46,7 +47,7 @@ Vue.directive("sparkle", {
           el.appendChild(particle);
         }
       }
-      setTimeout(sparkle, randomInterval(minInterval, maxInterval));
+      if (! sparkleKill) setTimeout(sparkle, randomInterval(minInterval, maxInterval));
     }, randomInterval(options.minInterval, options.maxInterval));
   },
   update(el, binding) {
@@ -55,5 +56,8 @@ Vue.directive("sparkle", {
     el.dataset.minInterval = options.minInterval;
     el.dataset.maxInterval = options.maxInterval;
     el.dataset.edgeSpillage = options.edgeSpillage;
-  }
+  },
+  unbind(el) {
+    el.dataset.sparkleKill = true;
+  },
 });
