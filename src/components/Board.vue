@@ -1,15 +1,17 @@
 <template>
-  <div class="board">
-    <table>
-      <tr v-for="(row, rowIndex) in cells" :key="rowIndex">
-        <td v-for="(cell, cellIndex) in row" :key="cellIndex">
-          <BoardCell
-            :cell="cell"
-            :playable="cellPlayable(rowIndex, cellIndex)"
-            @clicked="cellClicked(rowIndex, cellIndex)"/>
-        </td>
-      </tr>
-    </table>
+  <div class="board-container">
+    <div class="board">
+      <table>
+        <tr v-for="(row, rowIndex) in cells" :key="rowIndex">
+          <td v-for="(cell, cellIndex) in row" :key="cellIndex">
+            <BoardCell
+              :cell="cell"
+              :playable="cellPlayable(rowIndex, cellIndex)"
+              @clicked="cellClicked(rowIndex, cellIndex)"/>
+          </td>
+        </tr>
+      </table>
+    </div>
   </div>
 </template>
 
@@ -39,19 +41,32 @@ export default {
 </script>
 
 <style lang="scss">
-  .board {
+  @import "@/global.scss";
+
+  .board-container {
+    @include backdrop-texture;
     flex: 1 1 100%;
-    background: #ddd;
+    position: relative;
+    z-index: 50;
 
-    table {
-      border-spacing: 0px;
-      border: 1px solid black;
+    .board {
+      @include plate;
+      border-top-left-radius: 0px;
+      border-bottom-left-radius: 0px;
+      position: absolute;
+      left: 0px;
+      top: 20px;
 
-      td {
+      table {
+        border-spacing: 0px;
         border: 1px solid black;
-        width: 50px;
-        height: 50px;
-        padding: 0px;
+
+        td {
+          border: 1px solid black;
+          width: 50px;
+          height: 50px;
+          padding: 0px;
+        }
       }
     }
   }

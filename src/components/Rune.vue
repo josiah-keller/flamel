@@ -49,6 +49,7 @@ export default {
 
   .rune {
     box-sizing: border-box;
+    font-family: "Times New Roman", serif;
     font-size: 30px;
     font-weight: bold;
     text-shadow: 0px 0px 5px rgba(0, 0, 0, 0.75);
