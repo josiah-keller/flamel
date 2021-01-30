@@ -1,7 +1,7 @@
 <template>
   <div id="app">
-    <MainMenu v-show="! isGameActive"/>
-    <PlayArea v-if="isGameInitialized"/>
+    <MainMenu v-if="! isGameActive"/>
+    <PlayArea v-if="isGameInitialized && isGameActive"/>
   </div>
 </template>
 
