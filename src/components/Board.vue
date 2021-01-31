@@ -20,7 +20,6 @@ import { mapState } from "vuex";
 
 import BoardCell from "./BoardCell";
 import Game from "../game/game";
-import store from "../game/store";
 
 export default {
   components: {
@@ -34,7 +33,7 @@ export default {
       Game.place(rowIndex, cellIndex);
     },
     cellPlayable(rowIndex, cellIndex) {
-      return Game.moveLegal(store.state.nextRune, rowIndex, cellIndex);
+      return Game.moveLegal(this.$store.state.nextRune, rowIndex, cellIndex);
     },
   },
 };

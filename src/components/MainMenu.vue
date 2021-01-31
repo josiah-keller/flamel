@@ -19,7 +19,6 @@ import { mapState } from "vuex";
 
 import Game from "../game/game";
 import Constants from "../game/constants";
-import store from "../game/store";
 import "../directives/sparkle";
 
 export default {
@@ -42,7 +41,7 @@ export default {
   },
   methods: {
     startGame() {
-      store.dispatch("setDifficulty", this.difficulty);
+      this.$store.dispatch("setDifficulty", this.difficulty);
       Game.init();
     },
     selectEasy() {

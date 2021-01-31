@@ -31,12 +31,11 @@ import { mapState } from "vuex";
 
 import Game from "../game/game";
 import Constants from "../game/constants";
-import store from "../game/store";
 
 export default {
   computed: {
     boardsCleared() {
-      return store.state.level - Constants.STARTING_LEVELS[store.state.difficulty] + 1;
+      return this.$store.state.level - Constants.STARTING_LEVELS[this.$store.state.difficulty] + 1;
     },
     ...mapState(["timeAccumulator", "maxRun", "score"]),
   },
@@ -45,7 +44,7 @@ export default {
       Game.nextLevel();
     },
     returnToMainMenu() {
-      store.dispatch("gameInactive");
+      this.$store.dispatch("gameInactive");
     },
   },
   filters: {

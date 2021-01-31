@@ -11,7 +11,6 @@
 <script>
 import { mapState } from "vuex";
 import Game from "../game/game";
-import store from "../game/store";
 
 import Board from "./Board";
 import StatusBar from "./StatusBar";
@@ -30,7 +29,7 @@ export default {
   computed: {
     ...mapState(["nextRune", "isGameOver", "isBoardCleared"]),
     showIllegalIndicator() {
-      return !Game.anyMoveLegal(store.state.nextRune);
+      return !Game.anyMoveLegal(this.$store.state.nextRune);
     },
   },
   methods: {

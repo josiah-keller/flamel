@@ -38,7 +38,6 @@
 import { mapState } from "vuex";
 
 import Game from "../game/game";
-import store from "../game/store";
 
 export default {
   computed: {
@@ -49,10 +48,10 @@ export default {
       Game.discard();
     },
     returnToMainMenu() {
-      store.dispatch("gameInactive");
+      this.$store.dispatch("gameInactive");
     },
     dumpState() {
-      console.log(JSON.stringify(store.state));
+      console.log(JSON.stringify(this.$store.state));
     },
   },
   data() {

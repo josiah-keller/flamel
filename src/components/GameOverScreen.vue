@@ -8,12 +8,11 @@
 </template>
 
 <script>
-import store from "../game/store";
 
 export default {
   methods: {
     returnToMainMenu() {
-      store.dispatch("gameInactive");
+      this.$store.dispatch("gameInactive");
     },
   },
 };
