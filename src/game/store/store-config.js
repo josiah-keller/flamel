@@ -101,7 +101,11 @@ export default {
       commit("setForge", 0);
     },
     selectNextRune({ state, commit }) {
-      commit("setNextRune", Random.generateRune(state.level));
+      let nextRune = Random.generateRune(state.level);
+      while (state.nextRune && nextRune.shape === state.nextRune.shape && nextRune.color === state.nextRune.color) {
+        nextRune = Random.generateRune(state.level);
+      }
+      commit("setNextRune", nextRune);
     },
     setWildRune({ commit }) {
       commit("setNextRune", {
