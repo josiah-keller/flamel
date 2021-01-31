@@ -11,6 +11,7 @@
 <script>
 import { mapState } from "vuex";
 import Game from "../game/game";
+import Constants from "../game/constants";
 
 import Board from "./Board";
 import StatusBar from "./StatusBar";
@@ -27,9 +28,9 @@ export default {
     BoardClearedScreen,
   },
   computed: {
-    ...mapState(["nextRune", "isGameOver", "isBoardCleared"]),
+    ...mapState(["nextRune", "isGameOver", "isBoardCleared", "difficulty"]),
     showIllegalIndicator() {
-      return !Game.anyMoveLegal(this.$store.state.nextRune);
+      return this.difficulty == Constants.Difficulties.EASY && !Game.anyMoveLegal(this.nextRune);
     },
   },
   methods: {

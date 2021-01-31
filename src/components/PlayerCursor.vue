@@ -60,6 +60,21 @@ export default {
     }
   }
 
+  @keyframes blink {
+    0% {
+      opacity: 1;
+    }
+    49% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+
   .player-cursor {
     position: fixed;
     z-index: 99;
@@ -73,20 +88,22 @@ export default {
     .illegal-indicator {
       box-sizing: border-box;
       position: absolute;
-      left: 0px;
-      top: 0px;
-      width: 20px;
-      height: 20px;
-      border-radius: 10px;
-      border: 2px solid red;
+      left: calc(50% - 13px);
+      top: calc(50% - 13px);
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 2px solid #d00;
+      box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25);
+      animation: blink 0.2s linear alternate infinite;
 
       &::after {
         position: absolute;
         left: -1px;
-        top: 8px;
-        width: 18px;
+        top: 10px;
+        width: 24px;
         height: 2px;
-        background: red;
+        background: #d00;
         content: ' ';
         transform: rotate(45deg);
       }
