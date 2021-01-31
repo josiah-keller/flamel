@@ -13,7 +13,7 @@ export default {
     isBoardCleared: false,
     cells: [],
     nextRune: null,
-    difficulty: Constants.Difficulties.MEDIUM,
+    difficulty: Constants.Difficulties.EASY,
     timeAccumulator: 0,
     startTime: null,
     runCount: 0,

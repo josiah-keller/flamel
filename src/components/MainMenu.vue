@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapActions } from "vuex";
 
 import Game from "../game/game";
 import Constants from "../game/constants";
@@ -23,7 +23,7 @@ import "../directives/sparkle";
 
 export default {
   computed: {
-    ...mapState(["isGameActive"]),
+    ...mapState(["isGameActive", "difficulty"]),
     easySelected() {
       return this.difficulty === Constants.Difficulties.EASY ? "selected" : "";
     },
@@ -34,24 +34,19 @@ export default {
       return this.difficulty === Constants.Difficulties.HARD ? "selected" : "";
     },
   },
-  data() {
-    return {
-      difficulty: Constants.Difficulties.EASY,
-    };
-  },
   methods: {
+    ...mapActions(["setDifficulty"]),
     startGame() {
-      this.$store.dispatch("setDifficulty", this.difficulty);
       Game.init();
     },
     selectEasy() {
-      this.difficulty = Constants.Difficulties.EASY;
+      this.setDifficulty(Constants.Difficulties.EASY);
     },
     selectMedium() {
-      this.difficulty = Constants.Difficulties.MEDIUM;
+      this.setDifficulty(Constants.Difficulties.MEDIUM);
     },
     selectHard() {
-      this.difficulty = Constants.Difficulties.HARD;
+      this.setDifficulty(Constants.Difficulties.HARD);
     },
   },
 };
