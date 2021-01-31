@@ -1,5 +1,5 @@
 <template>
-  <div class="rune" :class="classString">
+  <div class="rune" :class="classes">
     {{ shape }}
   </div>
 </template>
@@ -12,14 +12,14 @@ export default {
     color: String,
   },
   computed: {
-    classString() {
-      let cls = `color-${this.color}`;
-      if (this.shape === Constants.WILD_SHAPE) {
-        cls += " special-wild";
-      } else if (this.shape === Constants.BOMB_SHAPE) {
-        cls += " special-bomb";
-      }
-      return cls;
+    classes() {
+      return [
+        `color-${this.color}`,
+        {
+          "special-wild": this.shape === Constants.WILD_SHAPE,
+          "special-bomb": this.shape === Constants.BOMB_SHAPE,
+        },
+      ];
     },
   },
 };
