@@ -39,7 +39,6 @@ export default {
   },
   mounted() {
     this.$watch("rune", function() {
-      console.log("new rune");
       this.newRune = true;
     }, { deep: true });
     this.$refs.container.addEventListener("animationend", () => {
