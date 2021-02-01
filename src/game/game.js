@@ -28,8 +28,8 @@ export default {
   nextLevel() {
     store.dispatch("initializeBoard");
     store.dispatch("incrementLevel");
+    store.dispatch("clearForge");
     store.dispatch("setWildRune");
-    store.dispatch("boardUncleared");
     store.dispatch("startClock");
   },
   discard() {
