@@ -1,7 +1,7 @@
 <template>
   <div class="play-area" @contextmenu="discard($event)">
-    <StatusBar/>
-    <Board/>
+    <StatusBar v-if="!isGameOver && !isBoardCleared"/>
+    <Board v-if="!isGameOver && !isBoardCleared"/>
     <PlayerCursor :rune="nextRune" :showIllegalIndicator="showIllegalIndicator"/>
     <GameOverScreen v-if="isGameOver"/>
     <BoardClearedScreen v-if="isBoardCleared"/>
