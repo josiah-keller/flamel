@@ -10,6 +10,8 @@
 </template>
 
 <script>
+// need this so that the followMouse directive can update the cursor coordinates
+import store from "../game/store";
 import Rune from "./Rune";
 
 const CURSOR_OFFSET = 1;
@@ -31,8 +33,11 @@ export default {
     followMouse: {
       bind(el) {
         document.body.addEventListener("mousemove", e => {
-          el.style.right = `${innerWidth - e.clientX + CURSOR_OFFSET}px`;
-          el.style.bottom = `${innerHeight - e.clientY + CURSOR_OFFSET}px`;
+          const x = innerWidth - e.clientX + CURSOR_OFFSET,
+            y = innerHeight - e.clientY + CURSOR_OFFSET;
+          el.style.right = `${x}px`;
+          el.style.bottom = `${y}px`;
+          store.dispatch("setCursorCoords", { x, y })
         });
       }
     },

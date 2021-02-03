@@ -38,6 +38,7 @@ export default {
     if (store.state.forge > store.state.maxForges) {
       return this.gameOver();
     }
+    store.dispatch("discardRune");
     store.dispatch("selectNextRune");
   },
   cellOccupied(rowIndex, cellIndex) {

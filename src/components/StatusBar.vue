@@ -7,7 +7,7 @@
     <div class="nav-buttons">
       <button @click="returnToMainMenu()">New Game</button>
     </div>
-    <Forge :value="forge" :max="maxForges" @discard="discard"/>
+    <Forge/>
     <div class="debug" v-if="debugEnabled">
       <button @click="dumpState">Dump State JSON to Console</button>
     </div>
@@ -20,20 +20,15 @@ import { mapState } from "vuex";
 import Forge from "./Forge";
 import GameStatus from "./GameStatus";
 
-import Game from "../game/game";
-
 export default {
   components: {
     GameStatus,
     Forge,
   },
   computed: {
-    ...mapState(["score", "forge", "maxForges", "difficulty", "level"]),
+    ...mapState(["score", "difficulty", "level"]),
   },
   methods: {
-    discard() {
-      Game.discard();
-    },
     returnToMainMenu() {
       this.$store.dispatch("gameInactive");
     },
