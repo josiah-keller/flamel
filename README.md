@@ -1,29 +1,33 @@
 # Flamel
 
+This is an open-source reimplementation of _Alchemy_. It's a web app written in Vue.
+
 ## Project setup
 ```
-npm install
+yarn install
 ```
 
-### Compiles and hot-reloads for development
+### Dev server
 ```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
+yarn serve
 ```
 
-### Run your tests
+### Production build
 ```
-npm run test
-```
-
-### Lints and fixes files
-```
-npm run lint
+yarn build
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### Unit tests
+```
+yarn test:unit
+```
+
+### Lint
+```
+yarn lint
+```
+
+[Vue CLI configuration reference](https://cli.vuejs.org/config/).
+
+## License
+This software is available under the [MIT License](LICENSE).
