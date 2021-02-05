@@ -44,6 +44,45 @@ body {
   }
 }
 
+@keyframes glimmer-particle {
+  0% {
+    transform: translate(0px, 0px) rotate(0deg) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(0px, 10px) rotate(-45deg) scale(0.5);
+    opacity: 0;
+  }
+}
+
+.glimmer-particle {
+  position: fixed;
+  animation: 0.5s linear glimmer-particle;
+  z-index: 97;
+
+  &::before {
+    display: block;
+    content: ' ';
+    width: 8px;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.3);
+    position: absolute;
+    left: -3px;
+    top: 0px;
+  }
+
+  &::after {
+    display: block;
+    content: ' ';
+    width: 2px;
+    height: 10px;
+    background: rgba(255, 255, 255, 0.3);
+    position: absolute;
+    left: 0px;
+    top: -4px;
+  }
+}
+
 .logo {
   font-weight: normal;
   color: #646407;

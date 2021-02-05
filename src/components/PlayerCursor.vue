@@ -3,7 +3,8 @@
     class="player-cursor"
     :class="{ 'new-rune': newRune }"
     ref="container"
-    v-follow-mouse>
+    v-follow-mouse
+    v-glimmer-trail="glimmerOptions">
     <Rune :shape="rune.shape" :color="rune.color"/>
     <div class="illegal-indicator" v-show="showIllegalIndicator"></div>
   </div>
@@ -13,6 +14,8 @@
 // need this so that the followMouse directive can update the cursor coordinates
 import store from "../game/store";
 import Rune from "./Rune";
+
+import "../directives/glimmer-trail";
 
 const CURSOR_OFFSET = 1;
 
@@ -27,17 +30,26 @@ export default {
   data() {
     return {
       newRune: false,
+      isMoving: false,
+      glimmerOptions: { maxParticles: 6, minInterval: 400, maxInterval: 700 },
     };
   },
   directives: {
     followMouse: {
-      bind(el) {
+      bind(el, binding, vnode) {
+        let timeout;
+        const vm = vnode.context;
         document.body.addEventListener("mousemove", e => {
           const x = innerWidth - e.clientX + CURSOR_OFFSET,
             y = innerHeight - e.clientY + CURSOR_OFFSET;
           el.style.right = `${x}px`;
           el.style.bottom = `${y}px`;
-          store.dispatch("setCursorCoords", { x, y })
+          vm.isMoving = true;
+          if (timeout) clearTimeout(timeout);
+          timeout = setTimeout(function() {
+            vm.isMoving = false;
+          }, 100);
+          store.dispatch("setCursorCoords", { x, y });
         });
       }
     },
@@ -48,6 +60,9 @@ export default {
     }, { deep: true });
     this.$refs.container.addEventListener("animationend", () => {
       this.newRune = false;
+    });
+    this.$watch("isMoving", function(isMoving) {
+      this.glimmerOptions.maxParticles = isMoving ? 6 : 0;
     });
   },
 };
