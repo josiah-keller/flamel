@@ -58,8 +58,10 @@ export default {
     this.$watch("rune", function() {
       this.newRune = true;
     }, { deep: true });
-    this.$refs.container.addEventListener("animationend", () => {
-      this.newRune = false;
+    this.$refs.container.addEventListener("animationend", (e) => {
+      if (e.target.classList.contains("rune")) {
+        this.newRune = false;
+      }
     });
     this.$watch("isMoving", function(isMoving) {
       this.glimmerOptions.maxParticles = isMoving ? 6 : 0;
