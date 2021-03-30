@@ -133,6 +133,7 @@ export default {
         &.fly {
           opacity: 1;
           transition: transform 0.2s linear;
+          z-index: 3;
         }
         &.melt {
           animation: melt 0.2s ease-out;
