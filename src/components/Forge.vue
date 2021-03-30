@@ -50,15 +50,15 @@ export default {
       this.phantomOffsets.y = `${innerHeight - this.$store.state.cursorY - boundingRect.bottom}px`;
     },
     flyPhantom() {
-      requestAnimationFrame(() => {
-        this.phantomOffsets.x = this.phantomOffsets.y = "0px";
-      });
+      this.phantomOffsets.x = this.phantomOffsets.y = "0px";
     },
     playDiscardAnimation() {
       this.positionPhantom();
       this.$nextTick(() => {
-        this.fly = true;
-        this.flyPhantom();
+        setTimeout(() => {
+          this.fly = true;
+          this.flyPhantom();
+        }, 10);
       });
     },
   },
