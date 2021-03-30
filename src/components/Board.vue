@@ -12,6 +12,14 @@
         </tr>
       </table>
     </div>
+    <div
+      class="score-tip"
+      :class="{ 'score-incremented': scoreIncremented }"
+      ref="scoreTip"
+      :style="{ right: `${scoreTipX}px`, bottom: `${scoreTipY}px` }">
+
+        {{ lastScoreIncrement }}
+    </div>
   </div>
 </template>
 
@@ -25,8 +33,15 @@ export default {
   components: {
     BoardCell,
   },
+  data() {
+    return {
+      scoreIncremented: false,
+      scoreTipX: 0,
+      scoreTipY: 0,
+    };
+  },
   computed: {
-    ...mapState(["cells"]),
+    ...mapState(["cells", "score", "lastScoreIncrement", "cursorX", "cursorY"]),
   },
   methods: {
     cellClicked(rowIndex, cellIndex) {
@@ -35,12 +50,36 @@ export default {
     cellPlayable(rowIndex, cellIndex) {
       return Game.moveLegal(this.$store.state.nextRune, rowIndex, cellIndex);
     },
+    showScoreTip() {
+      this.scoreTipX = this.cursorX;
+      this.scoreTipY = this.cursorY;
+      this.scoreIncremented = true;
+    },
+  },
+  mounted() {
+    this.$watch("score", function() {
+      this.showScoreTip();
+    });
+    this.$refs.scoreTip.addEventListener("animationend", () => {
+      this.scoreIncremented = false;
+    });
   },
 };
 </script>
 
 <style lang="scss">
   @import "@/global.scss";
+
+  @keyframes score-tip {
+    0% {
+      transform: translateY(-50px);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(-75px);
+      opacity: 0;
+    }
+  }
 
   .board-container {
     @include backdrop-texture;
@@ -66,6 +105,20 @@ export default {
           height: 50px;
           padding: 0px;
         }
+      }
+    }
+
+    .score-tip {
+      position: fixed;
+      transform: translateY(-50px);
+      font-family: "Fraunces", "Times New Roman", serif;
+      font-size: 18px;
+      color: #f7f79a;
+      text-shadow: 0px 0px 5px black;
+      opacity: 0;
+
+      &.score-incremented {
+        animation: score-tip 1s ease-out;
       }
     }
   }

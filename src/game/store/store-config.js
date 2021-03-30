@@ -22,6 +22,7 @@ export default {
     cursorX: 0,
     cursorY: 0,
     discardedRune: null,
+    lastScoreIncrement: 0,
   },
   mutations: {
     setCells(state, cells) {
@@ -89,6 +90,9 @@ export default {
     setDiscardedRune(state, newValue) {
       state.discardedRune = newValue;
     },
+    setLastScoreIncrement(state, newValue) {
+      state.lastScoreIncrement = newValue;
+    }
   },
   actions: {
     initializeBoard({ commit }) {
@@ -167,6 +171,7 @@ export default {
     },
     incrementScore({ state, commit }, increment) {
       commit("setScore", state.score + increment);
+      commit("setLastScoreIncrement", increment);
     },
     setLevel({ commit }, newValue) {
       commit("setLevel", newValue);
