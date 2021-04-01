@@ -2,7 +2,7 @@
   <div class="game-status">
     <div class="score">
         <h2 class="score-heading">Score</h2>
-        <span class="score-value">{{ score }}</span>
+        <span class="score-value">{{ presentedScore }}</span>
     </div>
     <div class="difficulty-level">
       <div class="difficulty">
@@ -18,11 +18,29 @@
 </template>
 
 <script>
+import tween from "../tween";
+
 export default {
   props: {
     score: Number,
     difficulty: Number,
     level: Number,
+  },
+  data() {
+    return {
+      tweenedScore: this.score,
+    };
+  },
+  computed: {
+    presentedScore() {
+      return this.tweenedScore.toFixed(0);
+    },
+  },
+  watch: {
+    score(newValue, oldValue) {
+      if (newValue === oldValue) return;
+      tween.go(this.$data, { tweenedScore: newValue }, { duration: 250 });
+    },
   },
 };
 </script>
