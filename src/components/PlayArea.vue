@@ -1,7 +1,7 @@
 <template>
   <div class="play-area" @contextmenu="discard($event)">
-    <StatusBar v-if="!isGameOver && !isBoardCleared"/>
-    <Board v-if="!isGameOver && !isBoardCleared"/>
+    <StatusBar v-if="!isGameOver && !delayedBoardCleared"/>
+    <Board v-if="!isGameOver && !delayedBoardCleared"/>
     <PlayerCursor :rune="nextRune" :showIllegalIndicator="showIllegalIndicator"/>
     <GameOverScreen v-if="isGameOver"/>
     <BoardClearedScreen v-if="isBoardCleared"/>
@@ -33,9 +33,28 @@ export default {
       return this.difficulty == Constants.Difficulties.EASY && !Game.anyMoveLegal(this.nextRune);
     },
   },
+  data() {
+    return {
+      delayedBoardCleared: this.isBoardCleared,
+      boardClearTimeout: null,
+    };
+  },
+  watch: {
+    isBoardCleared(newValue, oldValue) {
+      if (newValue === true && newValue !== oldValue) {
+        if (this.boardClearTimeout) clearTimeout(this.boardClearTimeout);
+        setTimeout(() => {
+          this.delayedBoardCleared = true;
+        }, Constants.BOARD_CLEAR_DELAY);
+      } else {
+        this.delayedBoardCleared = false;
+      }
+    },
+  },
   methods: {
     discard(e) {
       e.preventDefault();
+      if (this.isBoardCleared) return;
       Game.discard();
     },
   },

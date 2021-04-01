@@ -1,16 +1,19 @@
 <template>
   <div
+    v-show="!isBoardCleared"
     class="player-cursor"
     :class="{ 'new-rune': newRune }"
     ref="container"
     v-follow-mouse
     v-glimmer-trail="glimmerOptions">
-    <Rune :shape="rune.shape" :color="rune.color"/>
-    <div class="illegal-indicator" v-show="showIllegalIndicator"></div>
+      <Rune :shape="rune.shape" :color="rune.color"/>
+      <div class="illegal-indicator" v-show="showIllegalIndicator"></div>
   </div>
 </template>
 
 <script>
+import { mapState } from "vuex";
+
 // need this so that the followMouse directive can update the cursor coordinates
 import store from "../game/store";
 import Rune from "./Rune";
@@ -26,6 +29,9 @@ export default {
   props: {
     rune: Object,
     showIllegalIndicator: Boolean,
+  },
+  computed: {
+    ...mapState(["isBoardCleared"]),
   },
   data() {
     return {

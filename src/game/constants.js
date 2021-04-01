@@ -4,6 +4,8 @@ const Constants = {
   START_SPACE_ROW: 3,
   START_SPACE_COL: 4,
 
+  BOARD_CLEAR_DELAY: 3000,
+
   SPECIAL_COLOR: "special",
   WILD_SHAPE: "W",
   BOMB_SHAPE: "%",

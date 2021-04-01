@@ -64,11 +64,24 @@ export default {
 <style lang="scss">
   @import "@/global.scss";
 
+  @keyframes board-cleared {
+    0% {
+      opacity: 0;
+    }
+    90% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
   .board-cleared {
     @include backdrop-container;
     z-index: 100;
     font-family: "Fraunces", "Times New Roman", serif;
     user-select: none;
+    animation: board-cleared 3.33s linear;
 
     .board-cleared-wrapper {
       @include menu-wrapper;

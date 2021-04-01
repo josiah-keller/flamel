@@ -1,7 +1,7 @@
 <template>
   <div
     class="board-cell"
-    :class="{ 'gold': cell.gold, 'playable': playable, 'special': special, 'blank': blank }"
+    :class="{ 'gold': cell.gold, 'playable': playable, 'special': special, 'blank': blank, 'cleared': delayedBoardCleared }"
     @click="clicked">
       <Rune :shape="cell.shape" :color="cell.color"/>
       <div class="turn-blank-effect"></div>
@@ -9,6 +9,8 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
+
 import Rune from "./Rune";
 import Constants from '../game/constants';
 
@@ -23,9 +25,11 @@ export default {
   data() {
     return {
       blank: false,
+      delayedBoardCleared: this.isBoardCleared,
     };
   },
   computed: {
+    ...mapState(["isBoardCleared"]),
     special() {
       return this.cell.color === Constants.SPECIAL_COLOR;
     },
@@ -39,6 +43,12 @@ export default {
     // have to watch rather than use computed to prevent cells from "turning" blank at the start
     this.$watch("cell.shape", function(shape, oldShape) {
       this.blank = shape === null && oldShape !== null;
+    });
+    this.$watch("isBoardCleared", function(newValue, oldValue) {
+      if (newValue === oldValue) return;
+      setTimeout(() => {
+        this.delayedBoardCleared = newValue;
+      }, 500 + Math.random() * (Constants.BOARD_CLEAR_DELAY - 1000));
     });
   },
 };
@@ -71,6 +81,17 @@ export default {
     }
   }
 
+  @keyframes cleared {
+    0% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: scale(2);
+    }
+  }
+
   .board-cell {
     width: 100%;
     height: 100%;
@@ -94,6 +115,13 @@ export default {
     &.blank {
       .turn-blank-effect {
         animation: turn-blank 0.8s ease-in-out;
+      }
+    }
+
+    &.cleared {
+      .rune {
+        animation: cleared 0.4s ease-in;
+        opacity: 0;
       }
     }
 

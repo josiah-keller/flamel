@@ -18,7 +18,10 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
+
 import tween from "../tween";
+import Constants from "../game/constants";
 
 export default {
   props: {
@@ -32,6 +35,7 @@ export default {
     };
   },
   computed: {
+    ...mapState(["isBoardCleared"]),
     presentedScore() {
       return this.tweenedScore.toFixed(0);
     },
@@ -39,7 +43,8 @@ export default {
   watch: {
     score(newValue, oldValue) {
       if (newValue === oldValue) return;
-      tween.go(this.$data, { tweenedScore: newValue }, { duration: 250 });
+      const duration = this.isBoardCleared ? Constants.BOARD_CLEAR_DELAY : 250;
+      tween.go(this.$data, { tweenedScore: newValue }, { duration });
     },
   },
 };
