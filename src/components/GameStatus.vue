@@ -43,7 +43,7 @@ export default {
   watch: {
     score(newValue, oldValue) {
       if (newValue === oldValue) return;
-      const duration = this.isBoardCleared ? Constants.BOARD_CLEAR_DELAY : 250;
+      const duration = this.isBoardCleared ? Constants.BOARD_CLEAR_DELAY - 1000 : 250;
       tween.go(this.$data, { tweenedScore: newValue }, { duration });
     },
   },
