@@ -118,7 +118,12 @@ export default {
       opacity: 0;
 
       &.score-incremented {
+        visibility: visible;
         animation: score-tip 1s ease-out;
+      }
+
+      &:not(.score-incremented) {
+        visibility: hidden;
       }
     }
   }
