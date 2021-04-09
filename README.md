@@ -1,6 +1,6 @@
 # Flamel
 
-This is an open-source reimplementation of _Alchemy_. It's a web app written in Vue.
+This is an open-source reimplementation of _Alchemy_. It's a web app written in Vue. [Play it here](https://flamel.josiahkeller.com).
 
 ## Project setup
 ```
