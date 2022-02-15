@@ -89,7 +89,7 @@ export default {
     z-index: 100;
     font-family: "Fraunces", "Times New Roman", serif;
     user-select: none;
-    animation: game-over 1s linear;
+    animation: game-over 0.33s linear;
 
     .game-over-wrapper {
       @include menu-wrapper;
