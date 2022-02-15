@@ -58,14 +58,14 @@ export default {
   @keyframes turn-gold {
     0% {
       background: transparent;
-      box-shadow: 0px 0px 0px #cccc0a;
+      box-shadow: 0px 0px 0px #cccc0a, 0px 0px 0px rgba(120, 120, 11, 1) inset;
     }
     50% {
-      box-shadow: 0px 0px 10px #cccc0a;
+      box-shadow: 0px 0px 10px #cccc0a, 0px 0px 0px rgba(120, 120, 11, 1) inset;
     }
     100% {
       background: #cccc0a;
-      box-shadow: 0px 0px 0px #cccc0a;
+      box-shadow: 0px 0px 0px #cccc0a, 0px 0px 10px rgba(120, 120, 11, 1) inset;
     }
   }
 
@@ -102,9 +102,21 @@ export default {
 
     &.gold {
       background: #cccc0a;
+      box-shadow: 0px 0px 10px rgba(120, 120, 11, 0.8) inset;
 
       &:not(.special) {
         animation: turn-gold 0.5s linear;
+
+        &::before {
+          content: ' ';
+          position: absolute;
+          left: 5px;
+          top: 3px;
+          width: 10px;
+          height: 6px;
+          background: rgba(255, 255, 255, 0.1);
+          border-radius: 3px;
+        }
       }
 
       &.playable:hover {

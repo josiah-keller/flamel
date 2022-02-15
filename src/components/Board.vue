@@ -97,13 +97,14 @@ export default {
 
       table {
         border-spacing: 0px;
-        border: 1px solid black;
+        border: 1px solid #222222;
 
         td {
-          border: 1px solid black;
+          border: 1px solid #222222;
           width: 50px;
           height: 50px;
           padding: 0px;
+          box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.15) inset;
         }
       }
     }
