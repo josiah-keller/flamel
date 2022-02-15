@@ -7,7 +7,7 @@
     <div class="nav-buttons">
       <button @click="returnToMainMenu()">New Game</button>
     </div>
-    <Forge/>
+    <Forge :value="forge"/>
     <div class="debug" v-if="debugEnabled">
       <button @click="dumpState">Dump State JSON to Console</button>
     </div>
@@ -26,7 +26,7 @@ export default {
     Forge,
   },
   computed: {
-    ...mapState(["score", "difficulty", "level"]),
+    ...mapState(["score", "difficulty", "level", "forge"]),
   },
   methods: {
     returnToMainMenu() {

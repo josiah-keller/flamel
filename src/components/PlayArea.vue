@@ -43,7 +43,7 @@ export default {
     isBoardCleared(newValue, oldValue) {
       if (newValue === true && newValue !== oldValue) {
         if (this.boardClearTimeout) clearTimeout(this.boardClearTimeout);
-        setTimeout(() => {
+        this.boardClearTimeout = setTimeout(() => {
           this.delayedBoardCleared = true;
         }, Constants.BOARD_CLEAR_DELAY);
       } else {

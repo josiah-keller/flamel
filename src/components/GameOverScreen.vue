@@ -1,31 +1,95 @@
 <template>
   <div class="game-over">
     <div class="game-over-wrapper">
-      <h1 class="game-over-title">Game over</h1>
+      <h1 class="game-over-title" :class="{ 'game-over-forged': gameOverForged }">Game over</h1>
+      <div class="game-over-forge">
+        <Forge :value="forgeValue" :showButton="false"/>
+      </div>
       <button @click="returnToMainMenu()" v-sparkle="{ maxParticles: 6, minInterval: 100, maxInterval: 300 }">Main Menu</button>
     </div>
   </div>
 </template>
 
 <script>
+import Forge from "./Forge";
 
 export default {
+  components: {
+    Forge,
+  },
+  data() {
+    return {
+      forgeValue: 0,
+      gameOverForged: false,
+    };
+  },
   methods: {
     returnToMainMenu() {
       this.$store.dispatch("gameInactive");
     },
   },
+  mounted() {
+    setTimeout(() => {
+      this.forgeValue = 3;
+    }, 3000);
+    setTimeout(() => {
+      this.gameOverForged = true;
+    }, 5000);
+  }
 };
 </script>
 
 <style lang="scss">
   @import "@/global.scss";
 
+  @keyframes game-over {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes game-over-forged {
+    0% {
+      transform: translate(0px, 0px) rotate(0deg);
+      opacity: 1;
+      color: rgb(37, 21, 19);
+    }
+    10% {
+      transform: translate(0px, 125px) rotate(-4deg);
+      opacity: 1;
+      color: rgb(37, 21, 19);
+    }
+    20% {
+      transform: translate(0px, 120px) rotate(-2deg);
+      opacity: 1;
+      color: rgb(114, 11, 0);
+    }
+    50% {
+      transform: translate(0px, 125px) rotate(-2deg);
+      opacity: 0;
+      color: rgb(114, 11, 0);
+    }
+    90% {
+      transform: translate(0px, 0px) rotate(0deg);
+      opacity: 0;
+      color: rgb(37, 21, 19);
+    }
+    100% {
+      transform: translate(0px, 0px) rotate(0deg);
+      opacity: 1;
+      color: rgb(37, 21, 19);
+    }
+  }
+
   .game-over {
     @include backdrop-container;
     z-index: 100;
     font-family: "Fraunces", "Times New Roman", serif;
     user-select: none;
+    animation: game-over 1s linear;
 
     .game-over-wrapper {
       @include menu-wrapper;
@@ -34,7 +98,19 @@ export default {
         font-size: 52px;
         color: rgb(37, 21, 19);
         text-transform: uppercase;
-        margin-bottom: 100px;
+        margin-bottom: 30px;
+        position: relative;
+        z-index: 3;
+
+        &.game-over-forged {
+          animation: game-over-forged 8s ease-out;
+        }
+      }
+
+      .game-over-forge {
+        max-width: 600px;
+        margin: auto;
+        margin-bottom: 30px;
       }
 
       button {

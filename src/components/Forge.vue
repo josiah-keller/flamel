@@ -1,7 +1,7 @@
 <template>
   <div class="forge">
     <div class="forge-wrapper">
-      <div class="forge-fill" :style="{ height: `${(100 * forge / maxForges).toFixed(2)}%` }"></div>
+      <div class="forge-fill" :style="{ height: `${(100 * value / maxForges).toFixed(2)}%` }"></div>
       <div
         ref="phantom"
         class="forge-phantom-rune"
@@ -11,7 +11,7 @@
         <Rune v-if="discardedRune" :shape="discardedRune.shape" :color="discardedRune.color"/>
       </div>
     </div>
-    <div class="forge-discard">
+    <div class="forge-discard" v-if="showButton">
       <button @click="discard">Discard</button>
     </div>
   </div>
@@ -27,8 +27,15 @@ export default {
   components: {
     Rune,
   },
+  props: {
+    value: Number,
+    showButton:{
+      type: Boolean,
+      default: true,
+    },
+  },
   computed: {
-    ...mapState(["forge", "maxForges", "discardedRune"]),
+    ...mapState(["maxForges", "discardedRune"]),
   },
   data() {
     return {
