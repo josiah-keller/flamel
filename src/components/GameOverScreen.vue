@@ -120,7 +120,7 @@ export default {
         background-image: linear-gradient(to top, rgb(140, 0, 0) 0%, rgb(100, 0, 0) 30%, rgb(50, 0, 0) 49.9999%, rgb(120, 0, 0) 50%, rgb(160, 0, 0) 100%);
         transition: box-shadow 0.1s linear;
 
-        &:hover {
+        &:hover, &:focus {
           box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5) inset, 0px 0px 10px rgba(0, 0, 0, 0.25), 0px 0px 30px rgb(160, 0, 0);
         }
       }

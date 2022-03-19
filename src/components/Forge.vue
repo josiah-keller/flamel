@@ -161,7 +161,7 @@ export default {
         text-transform: uppercase;
         cursor: pointer;
 
-        &:hover {
+        &:hover, &:focus {
           background: #413c3c;
         }
       }

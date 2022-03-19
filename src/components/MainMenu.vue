@@ -81,8 +81,10 @@ export default {
           box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5) inset, 0px 0px 5px rgba(0, 0, 0, 1) inset;
           cursor: pointer;
 
-          &:hover {
+          &:hover, &:focus {
             color: rgba(255, 255, 255, 0.8);
+            background-color: #777;
+            background-image: linear-gradient(to top, rgb(120, 120, 120) 0%, rgb(60, 60, 60) 30%, rgb(40, 40, 40) 49.9999%, rgb(50, 50, 50) 50%, rgb(90, 90, 90) 100%);
           }
           &.selected {
             background-color: rgb(28, 138, 28);
@@ -101,7 +103,7 @@ export default {
           background-image: linear-gradient(to top, rgb(11, 159, 196) 0%, rgb(8, 76, 94) 30%, rgb(5, 56, 68) 49.9999%, rgb(8, 81, 99) 50%, rgb(12, 134, 165) 100%);
           transition: box-shadow 0.1s linear;
 
-          &:hover {
+          &:hover, &:focus {
             box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5) inset, 0px 0px 10px rgba(0, 0, 0, 0.25), 0px 0px 20px rgb(8, 80, 99);
           }
         }

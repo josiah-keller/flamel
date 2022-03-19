@@ -78,7 +78,7 @@ export default {
         box-shadow: 0px 2px #292720;
         cursor: pointer;
 
-        &:hover {
+        &:hover, &:focus {
           background: #66624f;
         }
 
