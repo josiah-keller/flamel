@@ -111,6 +111,7 @@ export default {
         background-color: rgb(0, 150, 0);
         background-image: linear-gradient(to top, rgb(0, 100, 0) 0%, rgb(0, 90, 0) 30%, rgb(0, 80, 0) 49.9999%, rgb(0, 120, 0) 50%, rgb(0, 140, 0) 100%);
         transition: box-shadow 0.1s linear;
+        margin-bottom: 10px;
 
         &:hover, &:focus {
           box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5) inset, 0px 0px 10px rgba(0, 0, 0, 0.25), 0px 0px 30px rgb(0, 140, 0);

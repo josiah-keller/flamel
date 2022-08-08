@@ -1,5 +1,6 @@
 <template>
   <div class="play-area" @contextmenu="discard($event)">
+    <OutsideScene v-if="!isGameOver && !delayedBoardCleared && showOutsideScene"/>
     <StatusBar v-if="!isGameOver && !delayedBoardCleared"/>
     <Board v-if="!isGameOver && !delayedBoardCleared"/>
     <PlayerCursor :rune="nextRune" :showIllegalIndicator="showIllegalIndicator"/>
@@ -18,6 +19,7 @@ import StatusBar from "./StatusBar";
 import PlayerCursor from "./PlayerCursor";
 import GameOverScreen from "./GameOverScreen";
 import BoardClearedScreen from "./BoardClearedScreen";
+import OutsideScene from "./OutsideScene.vue";
 
 export default {
   components: {
@@ -26,17 +28,22 @@ export default {
     PlayerCursor,
     GameOverScreen,
     BoardClearedScreen,
+    OutsideScene,
   },
   computed: {
     ...mapState(["nextRune", "isGameOver", "isBoardCleared", "difficulty"]),
     showIllegalIndicator() {
       return this.difficulty == Constants.Difficulties.EASY && !Game.anyMoveLegal(this.nextRune);
     },
+    showOutsideScene() {
+      return this.viewportWidth > 900;
+    },
   },
   data() {
     return {
       delayedBoardCleared: this.isBoardCleared,
       boardClearTimeout: null,
+      viewportWidth: window.innerWidth,
     };
   },
   watch: {
@@ -57,6 +64,15 @@ export default {
       if (this.isBoardCleared) return;
       Game.discard();
     },
+    onWindowResize() {
+      this.viewportWidth = window.innerWidth;
+    },
+  },
+  mounted() {
+    window.addEventListener('resize', this.onWindowResize);
+  },
+  beforeDestroy() {
+    window.removeEventListener('resize', this.onWindowResize);
   },
 };
 </script>
@@ -69,5 +85,9 @@ export default {
     user-select: none;
     cursor: default;
     display: flex;
+
+    @media screen and (max-width: 900px) {
+      flex-direction: column;
+    }
   }
 </style>

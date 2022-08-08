@@ -95,6 +95,13 @@ export default {
       left: 0px;
       top: 20px;
 
+      @media screen and (max-width: 900px) {
+        left: 20px;
+        top: 0px;
+        border-bottom-left-radius: 10px;
+        border-top-right-radius: 0px;
+      }
+
       table {
         border-spacing: 0px;
         border: 1px solid #222222;

@@ -1,7 +1,7 @@
 <template>
   <div class="status-bar">
-    <div class="logo-wrapper">
-      <h1 class="logo" v-sparkle>Flamel</h1>
+    <div class="logo-wrapper" @click="returnToMainMenu()" title="Return to Main Menu (leaves game)">
+      <h1 class="logo" v-sparkle>F<span class="lamel">lamel</span></h1>
     </div>
     <GameStatus :score="score" :difficulty="difficulty" :level="level"/>
     <div class="nav-buttons">
@@ -58,14 +58,44 @@ export default {
     box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
     font-family: "Fraunces", "Times New Roman", serif;
     user-select: none;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+
+    @media screen and (min-width: 1600px) {
+      border-left: 2px solid #494638;
+    }
+
+    @media screen and (max-width: 900px) {
+      flex-direction: row;
+      flex: 0 0 100px;
+    }
 
     .logo-wrapper {
       text-align: center;
       margin-top: 20px;
+      cursor: pointer;
+
+      @media screen and (max-width: 900px) {
+        margin-top: 13px;
+        margin-left: 20px;
+        vertical-align: middle;
+        order: 0;
+      }
+
+      @media screen and (max-width: 680px) {
+        .lamel {
+          display: none;
+        }
+      }
     }
 
     .nav-buttons {
       text-align: center;
+
+      @media screen and (max-width: 900px) {
+        display: none;
+      }
 
       button {
         font-family: "Fraunces", "Times New Roman", serif;

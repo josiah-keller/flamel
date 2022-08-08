@@ -97,6 +97,14 @@ export default {
     }
   }
   .forge {
+    flex: 0 0 120px;
+    width: 100%;
+    position: relative;
+
+    @media screen and (max-width: 900px) {
+      width: 120px;
+    }
+
     .forge-wrapper {
       border: 12px solid;
       border-radius: 3px;
@@ -104,9 +112,17 @@ export default {
       box-shadow: 0px 1px 2px 1px rgba(0, 0, 0, 0.4), 0px 0px 10px rgba(0, 0, 0, 0.5) inset;
       background: #000;
       background-image: linear-gradient(to top, #292720 0%, #1d1b17 100%);
+      box-sizing: border-box;
       margin: 20px 60px 0px 60px;
-      height: 100px;
+      width: calc(100% - 120px);
+      height: 124px;
       position: relative;
+
+      @media screen and (max-width: 900px) {
+        width: 100%;
+        height: 68px;
+        margin: 0px;
+      }
 
       .forge-fill {
         position: absolute;
@@ -140,7 +156,7 @@ export default {
         &.fly {
           opacity: 1;
           transition: transform 0.2s linear;
-          z-index: 3;
+          z-index: 4;
         }
         &.melt {
           animation: melt 0.2s ease-out;
@@ -163,6 +179,21 @@ export default {
 
         &:hover, &:focus {
           background: #413c3c;
+        }
+
+        @media screen and (max-width: 900px) {
+          position: absolute;
+          left: 0px;
+          top: 0px;
+          width: 100%;
+          height: 100%;
+          z-index: 3;
+          background: transparent;
+          border-radius: 0px;
+
+          &:hover, &:focus {
+            background: transparent;
+          }
         }
       }
     }
