@@ -94,12 +94,14 @@ export default {
       position: absolute;
       left: 0px;
       top: 20px;
+      --cell-size: 50px;
 
       @media screen and (max-width: 900px) {
         left: 20px;
         top: 0px;
         border-bottom-left-radius: 10px;
         border-top-right-radius: 0px;
+        --cell-size: min(50px, calc((100vw - 100px) / 9));
       }
 
       table {
@@ -108,8 +110,8 @@ export default {
 
         td {
           border: 1px solid #222222;
-          width: 50px;
-          height: 50px;
+          width: var(--cell-size);
+          height: var(--cell-size);
           padding: 0px;
           box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.15) inset;
         }

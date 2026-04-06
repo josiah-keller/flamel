@@ -69,6 +69,10 @@ export default {
     @media screen and (max-width: 900px) {
       flex-direction: row;
       flex: 0 0 100px;
+
+      .forge {
+        display: none;
+      }
     }
 
     .logo-wrapper {
@@ -81,6 +85,12 @@ export default {
         margin-left: 20px;
         vertical-align: middle;
         order: 0;
+
+        .logo {
+          line-height: 1;
+          padding-top: 11px;
+          padding-bottom: 11px;
+        }
       }
 
       @media screen and (max-width: 680px) {

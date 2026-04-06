@@ -3,6 +3,7 @@
     <OutsideScene v-if="!isGameOver && !delayedBoardCleared && showOutsideScene"/>
     <StatusBar v-if="!isGameOver && !delayedBoardCleared"/>
     <Board v-if="!isGameOver && !delayedBoardCleared"/>
+    <MobileBottomBar v-if="!isGameOver && !delayedBoardCleared"/>
     <PlayerCursor :rune="nextRune" :showIllegalIndicator="showIllegalIndicator"/>
     <GameOverScreen v-if="isGameOver"/>
     <BoardClearedScreen v-if="isBoardCleared"/>
@@ -19,12 +20,14 @@ import StatusBar from "./StatusBar";
 import PlayerCursor from "./PlayerCursor";
 import GameOverScreen from "./GameOverScreen";
 import BoardClearedScreen from "./BoardClearedScreen";
+import MobileBottomBar from "./MobileBottomBar";
 import OutsideScene from "./OutsideScene.vue";
 
 export default {
   components: {
     Board,
     StatusBar,
+    MobileBottomBar,
     PlayerCursor,
     GameOverScreen,
     BoardClearedScreen,

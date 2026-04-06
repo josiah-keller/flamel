@@ -47,6 +47,25 @@ export default {
     }
   }
 
+  .board .rune {
+    font-size: calc(var(--cell-size) * 0.6);
+
+    &.special-wild {
+      width: var(--cell-size);
+      height: var(--cell-size);
+      border-width: calc(var(--cell-size) * 0.44);
+    }
+    &.special-bomb {
+      width: calc(var(--cell-size) * 0.6);
+      height: calc(var(--cell-size) * 0.6);
+
+      &::after {
+        height: calc(var(--cell-size) * 0.2);
+        top: calc(var(--cell-size) * -0.2);
+      }
+    }
+  }
+
   .rune {
     box-sizing: border-box;
     font-family: "Times New Roman", serif;
