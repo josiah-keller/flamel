@@ -4,7 +4,7 @@
     <StatusBar v-if="!isGameOver && !delayedBoardCleared"/>
     <Board v-if="!isGameOver && !delayedBoardCleared"/>
     <MobileBottomBar v-if="!isGameOver && !delayedBoardCleared"/>
-    <PlayerCursor :rune="nextRune" :showIllegalIndicator="showIllegalIndicator"/>
+    <PlayerCursor v-if="viewportWidth > 900" :rune="nextRune" :showIllegalIndicator="showIllegalIndicator"/>
     <GameOverScreen v-if="isGameOver"/>
     <BoardClearedScreen v-if="isBoardCleared"/>
   </div>

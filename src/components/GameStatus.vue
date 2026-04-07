@@ -51,6 +51,8 @@ export default {
 </script>
 
 <style lang="scss">
+  @import "@/global.scss";
+
   .game-status {
     display: flex;
     flex-direction: column;
@@ -63,13 +65,8 @@ export default {
     }
 
     .score {
-      text-align: center;
-      background: #292720;
-      border-radius: 3px;
+      @include indicator-box;
       margin: 20px 50px 0px 50px;
-      padding: 5px;
-      box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5) inset;
-      color: rgba(255, 255, 255, 0.8);
 
       @media screen and (max-width: 900px) {
         margin: 13px 10px 0px 10px;
@@ -79,9 +76,7 @@ export default {
       }
 
       .score-heading {
-        font-size: 10px;
-        text-transform: uppercase;
-        margin: 0px;
+        @include indicator-heading;
       }
       .score-value {
         font-size: 28px;
@@ -99,13 +94,8 @@ export default {
       }
 
       .difficulty, .level {
+        @include indicator-box;
         flex: 1;
-        text-align: center;
-        background: #292720;
-        border-radius: 3px;
-        padding: 5px;
-        box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5) inset;
-        color: rgba(255, 255, 255, 0.8);
 
         @media screen and (max-width: 900px) {
           padding: 15px 10px;
@@ -113,9 +103,7 @@ export default {
         }
 
         .difficulty-heading, .level-heading {
-          font-size: 10px;
-          text-transform: uppercase;
-          margin: 0px;
+          @include indicator-heading;
         }
         .difficulty-value, .level-value {
           font-size: 22px;

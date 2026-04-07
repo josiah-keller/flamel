@@ -77,31 +77,7 @@ export default {
 </script>
 
 <style lang="scss">
-  @keyframes new-rune {
-    0% {
-      opacity: 0;
-      transform: scale(0);
-    }
-    100% {
-      opacity: 1;
-      transform: scale(1);
-    }
-  }
-
-  @keyframes blink {
-    0% {
-      opacity: 1;
-    }
-    49% {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0;
-    }
-    100% {
-      opacity: 0;
-    }
-  }
+  @import "@/global.scss";
 
   .player-cursor {
     position: fixed;
@@ -114,27 +90,7 @@ export default {
     }
 
     .illegal-indicator {
-      box-sizing: border-box;
-      position: absolute;
-      left: calc(50% - 13px);
-      top: calc(50% - 13px);
-      width: 26px;
-      height: 26px;
-      border-radius: 50%;
-      border: 2px solid #d00;
-      box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25);
-      animation: blink 0.2s linear alternate infinite;
-
-      &::after {
-        position: absolute;
-        left: -1px;
-        top: 10px;
-        width: 24px;
-        height: 2px;
-        background: #d00;
-        content: ' ';
-        transform: rotate(45deg);
-      }
+      @include illegal-indicator;
     }
   }
 </style>
