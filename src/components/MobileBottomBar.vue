@@ -1,7 +1,7 @@
 <template>
   <div class="mobile-bottom-bar">
     <Forge :value="forge"/>
-    <div class="next-rune-indicator" :class="{ 'new-rune': newRune }" ref="nextRune">
+    <div class="next-rune-indicator" :class="{ 'new-rune': newRune }" ref="nextRuneIndicator">
       <h2 class="next-rune-heading">Next</h2>
       <div class="rune-wrapper">
         <Rune :shape="nextRune.shape" :color="nextRune.color"/>
@@ -39,7 +39,7 @@ export default {
     this.$watch("nextRune", function() {
       this.newRune = true;
     }, { deep: true });
-    this.$refs.nextRune.addEventListener("animationend", (e) => {
+    this.$refs.nextRuneIndicator.addEventListener("animationend", (e) => {
       if (e.target.classList.contains("rune")) {
         this.newRune = false;
       }
@@ -83,6 +83,9 @@ export default {
 
       .rune-wrapper {
         position: relative;
+        height: 30px;
+        display: flex;
+        align-items: center;
 
         .illegal-indicator {
           @include illegal-indicator;
