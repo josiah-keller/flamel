@@ -101,7 +101,7 @@ export default {
         margin-bottom: 50px;
 
         td {
-          padding: 2px 0px;
+          padding: 10px 0px;
         }
       }
 

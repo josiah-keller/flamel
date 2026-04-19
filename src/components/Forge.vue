@@ -101,10 +101,6 @@ export default {
     width: 100%;
     position: relative;
 
-    @media screen and (max-width: 900px) {
-      width: 120px;
-    }
-
     .forge-wrapper {
       border: 12px solid;
       border-radius: 3px;
@@ -117,12 +113,6 @@ export default {
       width: calc(100% - 120px);
       height: 124px;
       position: relative;
-
-      @media screen and (max-width: 900px) {
-        width: 100%;
-        height: 68px;
-        margin: 0px;
-      }
 
       .forge-fill {
         position: absolute;
@@ -179,21 +169,6 @@ export default {
 
         &:hover, &:focus {
           background: #413c3c;
-        }
-
-        @media screen and (max-width: 900px) {
-          position: absolute;
-          left: 0px;
-          top: 0px;
-          width: 100%;
-          height: 100%;
-          z-index: 3;
-          background: transparent;
-          border-radius: 0px;
-
-          &:hover, &:focus {
-            background: transparent;
-          }
         }
       }
     }

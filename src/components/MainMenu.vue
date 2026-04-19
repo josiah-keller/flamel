@@ -67,6 +67,13 @@ export default {
       .difficulty-select {
         margin-top: 50px;
 
+        @media screen and (max-width: 1024px) {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 12px;
+        }
+
         button {
           color: rgba(255, 255, 255, 0.6);
           font-size: 22px;

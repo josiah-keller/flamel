@@ -96,6 +96,10 @@ export default {
 
       .game-over-title {
         font-size: 52px;
+
+        @media screen and (max-width: 1024px) {
+          font-size: 36px;
+        }
         color: rgb(37, 21, 19);
         text-transform: uppercase;
         margin-bottom: 30px;
@@ -111,6 +115,14 @@ export default {
         max-width: 600px;
         margin: auto;
         margin-bottom: 30px;
+
+        @media screen and (max-width: 1024px) {
+          .forge-wrapper {
+            margin-left: 20px;
+            margin-right: 20px;
+            width: calc(100% - 40px);
+          }
+        }
       }
 
       button {

@@ -66,6 +66,31 @@ export default {
       padding: 8px 12px;
       position: relative;
       z-index: 51;
+
+      .forge {
+        width: 120px;
+
+        .forge-wrapper {
+          width: 100%;
+          height: 68px;
+          margin: 0px;
+        }
+
+        .forge-discard button {
+          position: absolute;
+          left: 0px;
+          top: 0px;
+          width: 100%;
+          height: 100%;
+          z-index: 3;
+          background: transparent;
+          border-radius: 0px;
+
+          &:hover, &:focus {
+            background: transparent;
+          }
+        }
+      }
     }
 
     .next-rune-indicator {
