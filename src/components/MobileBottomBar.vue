@@ -112,6 +112,22 @@ export default {
         display: flex;
         align-items: center;
 
+        .rune.special-wild {
+          width: 30px;
+          height: 30px;
+          border-width: 13px;
+        }
+        .rune.special-bomb {
+          width: 22px;
+          height: 22px;
+          box-shadow: 0px 0px 6px rgba(255, 255, 255, 0.3);
+
+          &::after {
+            height: 7px;
+            top: -2px;
+          }
+        }
+
         .illegal-indicator {
           @include illegal-indicator;
         }
