@@ -72,7 +72,7 @@ export default {
 
         .forge-wrapper {
           width: 100%;
-          height: 68px;
+          height: 72px;
           margin: 0px;
         }
 
