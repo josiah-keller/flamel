@@ -96,6 +96,10 @@ export default {
 
       .game-over-title {
         font-size: 52px;
+
+        @media screen and (max-width: 1024px) {
+          font-size: 36px;
+        }
         color: rgb(37, 21, 19);
         text-transform: uppercase;
         margin-bottom: 30px;
@@ -111,6 +115,14 @@ export default {
         max-width: 600px;
         margin: auto;
         margin-bottom: 30px;
+
+        @media screen and (max-width: 1024px) {
+          .forge-wrapper {
+            margin-left: 20px;
+            margin-right: 20px;
+            width: calc(100% - 40px);
+          }
+        }
       }
 
       button {
@@ -120,7 +132,7 @@ export default {
         background-image: linear-gradient(to top, rgb(140, 0, 0) 0%, rgb(100, 0, 0) 30%, rgb(50, 0, 0) 49.9999%, rgb(120, 0, 0) 50%, rgb(160, 0, 0) 100%);
         transition: box-shadow 0.1s linear;
 
-        &:hover {
+        &:hover, &:focus {
           box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5) inset, 0px 0px 10px rgba(0, 0, 0, 0.25), 0px 0px 30px rgb(160, 0, 0);
         }
       }

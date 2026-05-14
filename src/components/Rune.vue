@@ -47,6 +47,25 @@ export default {
     }
   }
 
+  .board .rune {
+    font-size: calc(var(--cell-size) * 0.6);
+
+    &.special-wild {
+      width: var(--cell-size);
+      height: var(--cell-size);
+      border-width: calc(var(--cell-size) * 0.44);
+    }
+    &.special-bomb {
+      width: calc(var(--cell-size) * 0.6);
+      height: calc(var(--cell-size) * 0.6);
+
+      &::after {
+        height: calc(var(--cell-size) * 0.2);
+        top: calc(var(--cell-size) * -0.2);
+      }
+    }
+  }
+
   .rune {
     box-sizing: border-box;
     font-family: "Times New Roman", serif;
@@ -99,7 +118,7 @@ export default {
       width: 30px;
       height: 30px;
       border-radius: 50%;
-      background: #222;
+      background: radial-gradient(circle at 30% 30%, #3e3e3e 0%, #222 25%);
       box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.75);
 
       &::after {
@@ -108,10 +127,10 @@ export default {
         width: 1px;
         height: 10px;
         left: 50%;
-        top: -10px;
+        top: -8px;
         transform: rotate(30deg);
         transform-origin: bottom center;
-        background: #222;
+        background: #666;
         box-shadow: 0px -4px 5px #f00;
         animation: 1s linear infinite bomb-fuse-spark;
       }

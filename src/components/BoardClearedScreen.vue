@@ -20,7 +20,7 @@
           <td>{{ score }}</td>
         </tr>
       </table>
-      <button @click="nextLevel()" v-sparkle="{ maxParticles: 6, minInterval: 100, maxInterval: 300 }">Play next board</button>
+      <button @click="nextLevel()" v-sparkle="{ maxParticles: 6, minInterval: 100, maxInterval: 300 }">Next board</button>
       <button @click="returnToMainMenu()">Main Menu</button>
     </div>
   </div>
@@ -86,6 +86,10 @@ export default {
     .board-cleared-wrapper {
       @include menu-wrapper;
 
+      @media screen and (max-width: 700px) {
+        height: auto;
+      }
+
       .board-cleared-title {
         font-size: 52ps;
         color: rgb(21, 37, 19);
@@ -101,7 +105,7 @@ export default {
         margin-bottom: 50px;
 
         td {
-          padding: 2px 0px;
+          padding: 10px 0px;
         }
       }
 
@@ -111,8 +115,9 @@ export default {
         background-color: rgb(0, 150, 0);
         background-image: linear-gradient(to top, rgb(0, 100, 0) 0%, rgb(0, 90, 0) 30%, rgb(0, 80, 0) 49.9999%, rgb(0, 120, 0) 50%, rgb(0, 140, 0) 100%);
         transition: box-shadow 0.1s linear;
+        margin-bottom: 10px;
 
-        &:hover {
+        &:hover, &:focus {
           box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5) inset, 0px 0px 10px rgba(0, 0, 0, 0.25), 0px 0px 30px rgb(0, 140, 0);
         }
       }

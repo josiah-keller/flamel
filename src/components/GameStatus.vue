@@ -51,46 +51,63 @@ export default {
 </script>
 
 <style lang="scss">
-  .score {
-    text-align: center;
-    background: #292720;
-    border-radius: 3px;
-    margin: 20px 50px;
-    padding: 5px;
-    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5) inset;
-    color: rgba(255, 255, 255, 0.8);
+  @import "@/global.scss";
 
-    .score-heading {
-      font-size: 10px;
-      text-transform: uppercase;
-      margin: 0px;
-    }
-    .score-value {
-      font-size: 28px;
-    }
-  }
-
-  .difficulty-level {
+  .game-status {
     display: flex;
-    column-gap: 10px;
-    margin: 20px 50px;
+    flex-direction: column;
+    width: 100%;
 
-    .difficulty, .level {
-      flex: 1;
-      text-align: center;
-      background: #292720;
-      border-radius: 3px;
-      padding: 5px;
-      box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5) inset;
-      color: rgba(255, 255, 255, 0.8);
+    flex: 0 2;
 
-      .difficulty-heading, .level-heading {
-        font-size: 10px;
-        text-transform: uppercase;
-        margin: 0px;
+    @media screen and (max-width: 900px) {
+      flex-direction: row;
+    }
+
+    .score {
+      @include indicator-box;
+      margin: 20px 50px 0px 50px;
+
+      @media screen and (max-width: 900px) {
+        margin: 13px 10px 0px 10px;
+        padding: 15px 10px;
+        width: 100px;
+        height: 44px;
       }
-      .difficulty-value, .level-value {
-        font-size: 22px;
+
+      .score-heading {
+        @include indicator-heading;
+      }
+      .score-value {
+        font-size: 28px;
+      }
+    }
+
+    .difficulty-level {
+      display: flex;
+      column-gap: 10px;
+      margin: 20px 50px;
+
+      @media screen and (max-width: 900px) {
+        margin: 13px 10px 0px 0px;
+        height: 44px;
+      }
+
+      .difficulty, .level {
+        @include indicator-box;
+        flex: 1;
+
+        @media screen and (max-width: 900px) {
+          padding: 15px 10px;
+          height: 44px;
+        }
+
+        .difficulty-heading, .level-heading {
+          @include indicator-heading;
+        }
+        .difficulty-value, .level-value {
+          font-size: 22px;
+        }
       }
     }
   }

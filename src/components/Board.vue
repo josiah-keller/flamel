@@ -1,7 +1,7 @@
 <template>
   <div class="board-container">
     <div class="board">
-      <table>
+      <table @touchstart.passive="onTouchStart">
         <tr v-for="(row, rowIndex) in cells" :key="rowIndex">
           <td v-for="(cell, cellIndex) in row" :key="cellIndex">
             <BoardCell
@@ -11,14 +11,6 @@
           </td>
         </tr>
       </table>
-    </div>
-    <div
-      class="score-tip"
-      :class="{ 'score-incremented': scoreIncremented }"
-      ref="scoreTip"
-      :style="{ right: `${scoreTipX}px`, bottom: `${scoreTipY}px` }">
-
-        {{ lastScoreIncrement }}
     </div>
   </div>
 </template>
@@ -33,15 +25,8 @@ export default {
   components: {
     BoardCell,
   },
-  data() {
-    return {
-      scoreIncremented: false,
-      scoreTipX: 0,
-      scoreTipY: 0,
-    };
-  },
   computed: {
-    ...mapState(["cells", "score", "lastScoreIncrement", "cursorX", "cursorY"]),
+    ...mapState(["cells"]),
   },
   methods: {
     cellClicked(rowIndex, cellIndex) {
@@ -50,36 +35,19 @@ export default {
     cellPlayable(rowIndex, cellIndex) {
       return Game.moveLegal(this.$store.state.nextRune, rowIndex, cellIndex);
     },
-    showScoreTip() {
-      this.scoreTipX = this.cursorX;
-      this.scoreTipY = this.cursorY;
-      this.scoreIncremented = true;
+    onTouchStart(e) {
+      const touch = e.touches[0];
+      this.$store.dispatch("setCursorCoords", {
+        x: innerWidth - touch.clientX,
+        y: innerHeight - touch.clientY,
+      });
     },
-  },
-  mounted() {
-    this.$watch("score", function() {
-      this.showScoreTip();
-    });
-    this.$refs.scoreTip.addEventListener("animationend", () => {
-      this.scoreIncremented = false;
-    });
   },
 };
 </script>
 
 <style lang="scss">
   @import "@/global.scss";
-
-  @keyframes score-tip {
-    0% {
-      transform: translateY(-50px);
-      opacity: 1;
-    }
-    100% {
-      transform: translateY(-75px);
-      opacity: 0;
-    }
-  }
 
   .board-container {
     @include backdrop-texture;
@@ -94,6 +62,15 @@ export default {
       position: absolute;
       left: 0px;
       top: 20px;
+      --cell-size: 50px;
+
+      @media screen and (max-width: 900px) {
+        left: 20px;
+        top: 0px;
+        border-bottom-left-radius: 10px;
+        border-top-right-radius: 0px;
+        --cell-size: min(50px, calc((100vw - 100px) / 9));
+      }
 
       table {
         border-spacing: 0px;
@@ -101,31 +78,13 @@ export default {
 
         td {
           border: 1px solid #222222;
-          width: 50px;
-          height: 50px;
+          width: var(--cell-size);
+          height: var(--cell-size);
           padding: 0px;
           box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.15) inset;
         }
       }
     }
 
-    .score-tip {
-      position: fixed;
-      transform: translateY(-50px);
-      font-family: "Fraunces", "Times New Roman", serif;
-      font-size: 18px;
-      color: #f7f79a;
-      text-shadow: 0px 0px 5px black;
-      opacity: 0;
-
-      &.score-incremented {
-        visibility: visible;
-        animation: score-tip 1s ease-out;
-      }
-
-      &:not(.score-incremented) {
-        visibility: hidden;
-      }
-    }
   }
 </style>

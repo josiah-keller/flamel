@@ -96,7 +96,7 @@ export default {
     width: 100%;
     height: 100%;
     text-align: center;
-    line-height: 50px;
+    line-height: var(--cell-size);
     vertical-align: middle;
     position: relative;
 

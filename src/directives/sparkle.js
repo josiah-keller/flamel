@@ -8,7 +8,7 @@ const DEFAULT_OPTIONS = {
 };
 
 function randomInterval(min, max) {
-  return min + (Math.random() * max - min);
+  return min + (Math.random() * (max - min));
 }
 
 Vue.directive("sparkle", {

@@ -97,6 +97,10 @@ export default {
     }
   }
   .forge {
+    flex: 0 0 120px;
+    width: 100%;
+    position: relative;
+
     .forge-wrapper {
       border: 12px solid;
       border-radius: 3px;
@@ -104,8 +108,10 @@ export default {
       box-shadow: 0px 1px 2px 1px rgba(0, 0, 0, 0.4), 0px 0px 10px rgba(0, 0, 0, 0.5) inset;
       background: #000;
       background-image: linear-gradient(to top, #292720 0%, #1d1b17 100%);
+      box-sizing: border-box;
       margin: 20px 60px 0px 60px;
-      height: 100px;
+      width: calc(100% - 120px);
+      height: 124px;
       position: relative;
 
       .forge-fill {
@@ -140,7 +146,7 @@ export default {
         &.fly {
           opacity: 1;
           transition: transform 0.2s linear;
-          z-index: 3;
+          z-index: 4;
         }
         &.melt {
           animation: melt 0.2s ease-out;
@@ -161,7 +167,7 @@ export default {
         text-transform: uppercase;
         cursor: pointer;
 
-        &:hover {
+        &:hover, &:focus {
           background: #413c3c;
         }
       }
