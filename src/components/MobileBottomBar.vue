@@ -1,6 +1,7 @@
 <template>
   <div class="mobile-bottom-bar">
     <Forge :value="forge"/>
+    <button class="mobile-pause-button" @click="pause()">Pause</button>
     <div class="next-rune-indicator" :class="{ 'new-rune': newRune }" ref="nextRuneIndicator">
       <h2 class="next-rune-heading">Next</h2>
       <div class="rune-wrapper">
@@ -34,6 +35,11 @@ export default {
     return {
       newRune: false,
     };
+  },
+  methods: {
+    pause() {
+      this.$store.dispatch("pauseGame");
+    },
   },
   mounted() {
     this.$watch("nextRune", function() {
@@ -91,6 +97,11 @@ export default {
           }
         }
       }
+    }
+
+    .mobile-pause-button {
+      @include sidebar-button;
+      margin-left: 8px;
     }
 
     .next-rune-indicator {

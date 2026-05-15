@@ -1,10 +1,10 @@
 <template>
   <div class="play-area" @contextmenu="discard($event)">
-    <OutsideScene v-if="!isGameOver && !delayedBoardCleared && showOutsideScene"/>
+    <OutsideScene v-if="!isGameOver && !delayedBoardCleared && !isPaused && showOutsideScene"/>
     <StatusBar v-if="!isGameOver && !delayedBoardCleared"/>
     <Board v-if="!isGameOver && !delayedBoardCleared"/>
-    <MobileBottomBar v-if="!isGameOver && !delayedBoardCleared"/>
-    <PlayerCursor v-if="viewportWidth > 900" :rune="nextRune" :showIllegalIndicator="showIllegalIndicator"/>
+    <MobileBottomBar v-if="!isGameOver && !delayedBoardCleared && !isPaused"/>
+    <PlayerCursor v-if="viewportWidth > 900 && !isPaused" :rune="nextRune" :showIllegalIndicator="showIllegalIndicator"/>
     <div
       class="score-tip"
       :class="{ 'score-incremented': scoreIncremented }"
@@ -14,6 +14,7 @@
     </div>
     <GameOverScreen v-if="isGameOver"/>
     <BoardClearedScreen v-if="isBoardCleared"/>
+    <PauseScreen v-if="isPaused"/>
   </div>
 </template>
 
@@ -27,6 +28,7 @@ import StatusBar from "./StatusBar";
 import PlayerCursor from "./PlayerCursor";
 import GameOverScreen from "./GameOverScreen";
 import BoardClearedScreen from "./BoardClearedScreen";
+import PauseScreen from "./PauseScreen";
 import MobileBottomBar from "./MobileBottomBar";
 import OutsideScene from "./OutsideScene.vue";
 
@@ -38,10 +40,11 @@ export default {
     PlayerCursor,
     GameOverScreen,
     BoardClearedScreen,
+    PauseScreen,
     OutsideScene,
   },
   computed: {
-    ...mapState(["nextRune", "isGameOver", "isBoardCleared", "difficulty", "score", "lastScoreIncrement", "cursorX", "cursorY"]),
+    ...mapState(["nextRune", "isGameOver", "isBoardCleared", "isPaused", "difficulty", "score", "lastScoreIncrement", "cursorX", "cursorY"]),
     showIllegalIndicator() {
       return this.difficulty == Constants.Difficulties.EASY && !Game.anyMoveLegal(this.nextRune);
     },
@@ -74,7 +77,7 @@ export default {
   methods: {
     discard(e) {
       e.preventDefault();
-      if (this.isBoardCleared) return;
+      if (this.isBoardCleared || this.isPaused) return;
       Game.discard();
     },
     onWindowResize() {

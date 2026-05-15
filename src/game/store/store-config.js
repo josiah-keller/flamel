@@ -11,6 +11,7 @@ export default {
     isGameActive: false,
     isGameOver: false,
     isBoardCleared: false,
+    isPaused: false,
     cells: [],
     nextRune: null,
     difficulty: Constants.Difficulties.EASY,
@@ -52,6 +53,9 @@ export default {
     },
     boardUncleared(state) {
       state.isBoardCleared = false;
+    },
+    setPaused(state, value) {
+      state.isPaused = value;
     },
     gameInitialized(state) {
       state.isGameInitialized = true;
@@ -192,6 +196,14 @@ export default {
     },
     resetClock({ commit }) {
       commit("setTimeAccumulator", 0);
+    },
+    pauseGame({ dispatch, commit }) {
+      dispatch("pauseClock");
+      commit("setPaused", true);
+    },
+    resumeGame({ dispatch, commit }) {
+      dispatch("startClock");
+      commit("setPaused", false);
     },
     updateRunCount({ state, commit }) {
       commit("setRunCount", state.runCount + 1);

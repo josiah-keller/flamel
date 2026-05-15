@@ -6,6 +6,7 @@
     <GameStatus :score="score" :difficulty="difficulty" :level="level"/>
     <div class="nav-buttons">
       <button @click="returnToMainMenu()">New Game</button>
+      <button @click="pause()">Pause</button>
     </div>
     <Forge :value="forge"/>
     <div class="debug" v-if="debugEnabled">
@@ -31,6 +32,9 @@ export default {
   methods: {
     returnToMainMenu() {
       this.$store.dispatch("gameInactive");
+    },
+    pause() {
+      this.$store.dispatch("pauseGame");
     },
     dumpState() {
       console.log(JSON.stringify(this.$store.state));
@@ -108,24 +112,8 @@ export default {
       }
 
       button {
-        font-family: "Fraunces", "Times New Roman", serif;
-        font-size: 16px;
-        color: #a3a08f;
-        padding: 5px 15px;
-        border: 1px solid #898677;
-        border-radius: 3px;
-        background: #494638;
-        box-shadow: 0px 2px #292720;
-        cursor: pointer;
-
-        &:hover, &:focus {
-          background: #66624f;
-        }
-
-        &:active {
-          background: #3d3b2f;
-          box-shadow: 0px 2px #1f1d18 inset;
-        }
+        @include sidebar-button;
+        margin: 0px 4px;
       }
     }
   }
