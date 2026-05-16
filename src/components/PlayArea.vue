@@ -56,6 +56,7 @@ export default {
     return {
       delayedBoardCleared: this.isBoardCleared,
       boardClearTimeout: null,
+      inactivityTimeout: null,
       viewportWidth: window.innerWidth,
       scoreIncremented: false,
       scoreTipX: 0,
@@ -73,6 +74,13 @@ export default {
         this.delayedBoardCleared = false;
       }
     },
+    isPaused(newValue) {
+      if (newValue) {
+        clearTimeout(this.inactivityTimeout);
+      } else {
+        this.resetInactivityTimer();
+      }
+    },
   },
   methods: {
     discard(e) {
@@ -83,9 +91,21 @@ export default {
     onWindowResize() {
       this.viewportWidth = window.innerWidth;
     },
+    resetInactivityTimer() {
+      clearTimeout(this.inactivityTimeout);
+      if (this.isPaused || this.isGameOver || this.isBoardCleared) return;
+      this.inactivityTimeout = setTimeout(() => {
+        if (!this.isPaused && !this.isGameOver && !this.isBoardCleared) {
+          this.$store.dispatch("pauseGame");
+        }
+      }, 5 * 60 * 1000);
+    },
   },
   mounted() {
     window.addEventListener('resize', this.onWindowResize);
+    window.addEventListener('mousemove', this.resetInactivityTimer);
+    window.addEventListener('touchstart', this.resetInactivityTimer);
+    this.resetInactivityTimer();
     this.$watch("score", function() {
       this.scoreTipX = this.cursorX;
       this.scoreTipY = this.cursorY;
@@ -97,6 +117,9 @@ export default {
   },
   beforeDestroy() {
     window.removeEventListener('resize', this.onWindowResize);
+    window.removeEventListener('mousemove', this.resetInactivityTimer);
+    window.removeEventListener('touchstart', this.resetInactivityTimer);
+    clearTimeout(this.inactivityTimeout);
   },
 };
 </script>
