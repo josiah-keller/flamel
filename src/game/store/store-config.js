@@ -24,6 +24,8 @@ export default {
     cursorY: 0,
     discardedRune: null,
     lastScoreIncrement: 0,
+    showHighScores: false,
+    highScoresInitialDifficulty: null,
   },
   mutations: {
     setCells(state, cells) {
@@ -96,7 +98,13 @@ export default {
     },
     setLastScoreIncrement(state, newValue) {
       state.lastScoreIncrement = newValue;
-    }
+    },
+    setShowHighScores(state, value) {
+      state.showHighScores = value;
+    },
+    setHighScoresInitialDifficulty(state, value) {
+      state.highScoresInitialDifficulty = value;
+    },
   },
   actions: {
     initializeBoard({ commit }) {
@@ -216,6 +224,14 @@ export default {
     },
     discardRune({ state, commit }) {
       commit("setDiscardedRune", state.nextRune);
+    },
+    openHighScores({ commit }, difficulty = null) {
+      commit("setHighScoresInitialDifficulty", difficulty);
+      commit("setShowHighScores", true);
+    },
+    closeHighScores({ commit }) {
+      commit("setShowHighScores", false);
+      commit("setHighScoresInitialDifficulty", null);
     },
   },
 }

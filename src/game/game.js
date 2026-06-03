@@ -1,4 +1,5 @@
 import Constants from "@/game/constants";
+import Highscores from "@/game/highscores";
 
 let store = null;
 
@@ -268,6 +269,7 @@ export default {
     store.dispatch("clearCell", { rowIndex, cellIndex });
   },
   gameOver() {
+    store.dispatch("pauseClock");
     store.dispatch("gameOver");
   },
   boardCleared() {
@@ -275,5 +277,6 @@ export default {
     store.dispatch("incrementScore", score);
     store.dispatch("pauseClock");
     store.dispatch("boardCleared");
+    Highscores.incrementBoardsPlayed();
   },
 };
