@@ -1,26 +1,42 @@
 <template>
   <div class="game-over">
     <div class="game-over-wrapper">
-      <h1 class="game-over-title" :class="{ 'game-over-forged': gameOverForged }">Game over</h1>
-      <div class="game-over-forge">
-        <Forge :value="forgeValue" :showButton="false"/>
-      </div>
-      <button @click="returnToMainMenu()" v-sparkle="{ maxParticles: 6, minInterval: 100, maxInterval: 300 }">Main Menu</button>
+      <template v-if="showPrompt">
+        <NewHighScorePrompt />
+      </template>
+      <template v-else>
+        <h1 class="game-over-title" :class="{ 'game-over-forged': gameOverForged }">Game over</h1>
+        <div class="game-over-forge">
+          <Forge :value="forgeValue" :showButton="false"/>
+        </div>
+        <button
+          v-if="! qualifiesForHighScore"
+          class="game-over-main-menu"
+          @click="returnToMainMenu()"
+          v-sparkle="{ maxParticles: 6, minInterval: 100, maxInterval: 300 }"
+        >Main Menu</button>
+      </template>
     </div>
   </div>
 </template>
 
 <script>
 import Forge from "./Forge";
+import NewHighScorePrompt from "./NewHighScorePrompt";
+import Highscores from "../game/highscores";
+import Constants from "../game/constants";
 
 export default {
   components: {
     Forge,
+    NewHighScorePrompt,
   },
   data() {
     return {
       forgeValue: 0,
       gameOverForged: false,
+      qualifiesForHighScore: false,
+      showPrompt: false,
     };
   },
   methods: {
@@ -29,12 +45,21 @@ export default {
     },
   },
   mounted() {
+    const { score, difficulty, level } = this.$store.state;
+    const boardsCleared = level - Constants.STARTING_LEVELS[difficulty];
+    this.qualifiesForHighScore = boardsCleared > 0 && Highscores.isNewHighScore(score, difficulty);
+
     setTimeout(() => {
       this.forgeValue = 3;
     }, 3000);
     setTimeout(() => {
       this.gameOverForged = true;
     }, 5000);
+    if (this.qualifiesForHighScore) {
+      setTimeout(() => {
+        this.showPrompt = true;
+      }, 15000);
+    }
   }
 };
 </script>
@@ -125,7 +150,7 @@ export default {
         }
       }
 
-      button {
+      button.game-over-main-menu {
         @include gloss-button-base;
         border-color: rgb(100, 0, 0);
         background-color: rgb(100, 0, 0);

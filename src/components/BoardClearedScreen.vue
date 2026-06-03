@@ -47,17 +47,6 @@ export default {
       this.$store.dispatch("gameInactive");
     },
   },
-  filters: {
-    gameTime(value) {
-      if (! value) value = 0;
-      let seconds = Math.floor(value / 1000),
-        minutes = Math.floor(seconds / 60),
-        hours = Math.floor(minutes / 60);
-      seconds = seconds % 60;
-      minutes = minutes % 60;
-      return `${hours > 0 ? `${hours}:` : ""}${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-    },
-  },
 };
 </script>
 

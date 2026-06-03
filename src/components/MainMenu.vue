@@ -10,6 +10,9 @@
       <div class="play">
         <button @click="startGame" v-sparkle>Play</button>
       </div>
+      <div class="high-scores-link">
+        <button @click="viewHighScores">High Scores</button>
+      </div>
     </div>
   </div>
 </template>
@@ -35,7 +38,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["setDifficulty"]),
+    ...mapActions(["setDifficulty", "openHighScores"]),
     startGame() {
       Game.init();
     },
@@ -47,6 +50,9 @@ export default {
     },
     selectHard() {
       this.setDifficulty(Constants.Difficulties.HARD);
+    },
+    viewHighScores() {
+      this.openHighScores(null);
     },
   },
 };
@@ -112,6 +118,28 @@ export default {
 
           &:hover, &:focus {
             box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5) inset, 0px 0px 10px rgba(0, 0, 0, 0.25), 0px 0px 20px rgb(8, 80, 99);
+          }
+        }
+      }
+
+      .high-scores-link {
+        margin-top: 16px;
+
+        button {
+          color: rgba(255, 255, 255, 0.5);
+          font-size: 16px;
+          font-family: "Fraunces", "Times New Roman", serif;
+          text-transform: uppercase;
+          padding: 6px 20px;
+          border: 1px solid rgba(255, 255, 255, 0.15);
+          border-radius: 20px;
+          background: transparent;
+          cursor: pointer;
+          transition: color 0.1s, border-color 0.1s;
+
+          &:hover, &:focus {
+            color: rgba(255, 255, 255, 0.8);
+            border-color: rgba(255, 255, 255, 0.4);
           }
         }
       }
