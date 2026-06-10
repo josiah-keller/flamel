@@ -89,6 +89,9 @@ export default {
         state.maxRun = state.runCount;
       }
     },
+    setMaxRun(state, newValue) {
+      state.maxRun = newValue;
+    },
     setCursorCoords(state, { x, y }) {
       state.cursorX = x;
       state.cursorY = y;
@@ -126,6 +129,8 @@ export default {
     newGame({ commit }) {
       commit("setScore", 0);
       commit("setForge", 0);
+      commit("setRunCount", 0);
+      commit("setMaxRun", 0);
     },
     selectNextRune({ state, commit }) {
       let nextRune = Random.generateRune(state.level);
