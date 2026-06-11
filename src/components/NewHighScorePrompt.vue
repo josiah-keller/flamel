@@ -111,7 +111,7 @@ export default {
 
     .new-high-score-title {
       font-size: 28px;
-      color: rgb(37, 21, 19);
+      color: $color-text-primary;
       text-transform: uppercase;
       margin-bottom: 16px;
 
@@ -127,12 +127,12 @@ export default {
       font-size: 16px;
 
       th {
-        color: rgb(37, 21, 19);
+        color: $color-text-primary;
         font-weight: normal;
         padding: 4px 0;
       }
       td {
-        color: rgb(37, 21, 19);
+        color: $color-text-primary;
         padding: 4px 0;
         text-align: right;
       }
@@ -144,13 +144,13 @@ export default {
       label {
         display: block;
         font-size: 16px;
-        color: rgb(37, 21, 19);
+        color: $color-text-primary;
         margin-bottom: 6px;
         text-transform: uppercase;
       }
 
       input {
-        font-family: "Fraunces", "Times New Roman", serif;
+        font-family: $font-display;
         font-size: 20px;
         padding: 8px 14px;
         border-radius: 8px;
@@ -174,15 +174,7 @@ export default {
       gap: 10px;
 
       button {
-        @include gloss-button-base;
-        border-color: rgb(8, 80, 99);
-        background-color: rgb(8, 80, 99);
-        background-image: linear-gradient(to top, rgb(11, 159, 196) 0%, rgb(8, 76, 94) 30%, rgb(5, 56, 68) 49.9999%, rgb(8, 81, 99) 50%, rgb(12, 134, 165) 100%);
-        transition: box-shadow 0.1s linear;
-
-        &:hover, &:focus {
-          box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5) inset, 0px 0px 10px rgba(0, 0, 0, 0.25), 0px 0px 20px rgb(8, 80, 99);
-        }
+        @include gloss-button-blue;
       }
     }
   }

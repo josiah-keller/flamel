@@ -80,12 +80,12 @@ export default {
     0% {
       transform: translate(0px, 0px) rotate(0deg);
       opacity: 1;
-      color: rgb(37, 21, 19);
+      color: $color-text-primary;
     }
     10% {
       transform: translate(0px, 125px) rotate(-4deg);
       opacity: 1;
-      color: rgb(37, 21, 19);
+      color: $color-text-primary;
     }
     20% {
       transform: translate(0px, 120px) rotate(-2deg);
@@ -100,19 +100,19 @@ export default {
     90% {
       transform: translate(0px, 0px) rotate(0deg);
       opacity: 0;
-      color: rgb(37, 21, 19);
+      color: $color-text-primary;
     }
     100% {
       transform: translate(0px, 0px) rotate(0deg);
       opacity: 1;
-      color: rgb(37, 21, 19);
+      color: $color-text-primary;
     }
   }
 
   .game-over {
     @include backdrop-container;
     z-index: 100;
-    font-family: "Fraunces", "Times New Roman", serif;
+    font-family: $font-display;
     user-select: none;
     animation: game-over 0.33s linear;
 
@@ -125,7 +125,7 @@ export default {
         @media screen and (max-width: 1024px) {
           font-size: 36px;
         }
-        color: rgb(37, 21, 19);
+        color: $color-text-primary;
         text-transform: uppercase;
         margin-bottom: 30px;
         position: relative;
@@ -151,15 +151,7 @@ export default {
       }
 
       button.game-over-main-menu {
-        @include gloss-button-base;
-        border-color: rgb(100, 0, 0);
-        background-color: rgb(100, 0, 0);
-        background-image: linear-gradient(to top, rgb(140, 0, 0) 0%, rgb(100, 0, 0) 30%, rgb(50, 0, 0) 49.9999%, rgb(120, 0, 0) 50%, rgb(160, 0, 0) 100%);
-        transition: box-shadow 0.1s linear;
-
-        &:hover, &:focus {
-          box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5) inset, 0px 0px 10px rgba(0, 0, 0, 0.25), 0px 0px 30px rgb(160, 0, 0);
-        }
+        @include gloss-button-red;
       }
     }
   }

@@ -163,7 +163,7 @@ export default {
   .high-scores {
     @include backdrop-container;
     z-index: 102;
-    font-family: "Fraunces", "Times New Roman", serif;
+    font-family: $font-display;
     user-select: none;
     overflow-y: auto;
 
@@ -183,7 +183,7 @@ export default {
 
       .high-scores-title {
         font-size: 40px;
-        color: rgb(37, 21, 19);
+        color: $color-text-primary;
         text-transform: uppercase;
         margin-bottom: 20px;
 
@@ -200,26 +200,13 @@ export default {
         gap: 6px;
 
         button {
-          color: rgba(255, 255, 255, 0.6);
+          @include tab-button-gray;
           font-size: 18px;
-          font-family: "Fraunces", "Times New Roman", serif;
-          text-transform: uppercase;
           padding: 8px 18px;
-          border: 1px solid #222;
-          border-radius: 10px;
-          background-color: #666;
-          background-image: linear-gradient(to top, rgb(100, 100, 100) 0%, rgb(50, 50, 50) 30%, rgb(35, 35, 35) 49.9999%, rgb(45, 45, 45) 50%, rgb(80, 80, 80) 100%);
           box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3) inset, 0px 0px 5px rgba(0, 0, 0, 1) inset;
-          cursor: pointer;
-
-          &:hover, &:focus {
-            color: rgba(255, 255, 255, 0.8);
-          }
 
           &.selected {
-            background-color: rgb(28, 138, 28);
-            background-image: linear-gradient(to top, rgb(35, 212, 35) 0%, rgb(21, 97, 21) 30%, rgb(16, 82, 16) 49.9999%, rgb(20, 97, 20) 50%, rgb(23, 165, 23) 100%);
-            color: rgba(255, 255, 255, 0.8);
+            @include tab-button-green-selected;
           }
         }
       }
@@ -279,7 +266,7 @@ export default {
 
           td {
             padding: 7px 8px;
-            color: rgb(37, 21, 19);
+            color: $color-text-primary;
           }
 
           &.new-entry-animating td {
@@ -372,13 +359,13 @@ export default {
       }
 
       .high-scores-empty {
-        color: rgb(37, 21, 19);
+        color: $color-text-primary;
         font-size: 18px;
         margin: 30px 0;
       }
 
       .boards-played-stat {
-        color: rgb(37, 21, 19);
+        color: $color-text-primary;
         font-size: 14px;
         font-weight: bold;
         margin-bottom: 16px;
@@ -389,10 +376,10 @@ export default {
           border: none;
           padding: 0;
           margin-left: 10px;
-          font-family: "Fraunces", "Times New Roman", serif;
+          font-family: $font-display;
           font-size: 14px;
           font-weight: normal;
-          color: rgb(37, 21, 19);
+          color: $color-text-primary;
           text-decoration: underline;
           cursor: pointer;
 
@@ -412,10 +399,10 @@ export default {
           border: none;
           padding: 0;
           margin-left: 8px;
-          font-family: "Fraunces", "Times New Roman", serif;
+          font-family: $font-display;
           font-size: 14px;
           font-weight: bold;
-          color: rgb(37, 21, 19);
+          color: $color-text-primary;
           text-decoration: underline;
           cursor: pointer;
 
@@ -426,16 +413,8 @@ export default {
       }
 
       .high-scores-back {
-        @include gloss-button-base;
-        border-color: rgb(8, 80, 99);
-        background-color: rgb(8, 80, 99);
-        background-image: linear-gradient(to top, rgb(11, 159, 196) 0%, rgb(8, 76, 94) 30%, rgb(5, 56, 68) 49.9999%, rgb(8, 81, 99) 50%, rgb(12, 134, 165) 100%);
-        transition: box-shadow 0.1s linear;
+        @include gloss-button-blue;
         margin-top: 10px;
-
-        &:hover, &:focus {
-          box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3) inset, 0px 0px 10px rgba(0, 0, 0, 0.25), 0px 0px 20px rgb(8, 80, 99);
-        }
       }
     }
   }
