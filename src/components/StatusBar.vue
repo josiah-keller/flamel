@@ -8,7 +8,7 @@
       <button @click="returnToMainMenu()">New Game</button>
       <button @click="pause()">Pause</button>
     </div>
-    <Forge :value="forge"/>
+    <Forge :value="forge" :getOriginRect="getOriginRect"/>
     <div class="debug" v-if="debugEnabled">
       <button @click="dumpState">Dump State JSON to Console</button>
     </div>
@@ -25,6 +25,12 @@ export default {
   components: {
     GameStatus,
     Forge,
+  },
+  props: {
+    getOriginRect: {
+      type: Function,
+      required: true,
+    },
   },
   computed: {
     ...mapState(["score", "difficulty", "level", "forge"]),

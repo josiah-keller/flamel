@@ -1,7 +1,7 @@
 <template>
   <div class="board-container">
     <div class="board">
-      <table @touchstart.passive="onTouchStart">
+      <table>
         <tr v-for="(row, rowIndex) in cells" :key="rowIndex">
           <td v-for="(cell, cellIndex) in row" :key="cellIndex">
             <BoardCell
@@ -34,13 +34,6 @@ export default {
     },
     cellPlayable(rowIndex, cellIndex) {
       return Game.moveLegal(this.$store.state.nextRune, rowIndex, cellIndex);
-    },
-    onTouchStart(e) {
-      const touch = e.touches[0];
-      this.$store.dispatch("setCursorCoords", {
-        x: innerWidth - touch.clientX,
-        y: innerHeight - touch.clientY,
-      });
     },
   },
 };

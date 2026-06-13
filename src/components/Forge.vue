@@ -33,6 +33,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    getOriginRect: {
+      type: Function,
+      default: () => null,
+    },
   },
   computed: {
     ...mapState(["maxForges", "discardedRune"]),
@@ -51,16 +55,17 @@ export default {
     discard() {
       Game.discard();
     },
-    positionPhantom() {
-      const boundingRect = this.$refs.phantom.getBoundingClientRect();
-      this.phantomOffsets.x = `${innerWidth - this.$store.state.cursorX - boundingRect.right}px`;
-      this.phantomOffsets.y = `${innerHeight - this.$store.state.cursorY - boundingRect.bottom}px`;
-    },
     flyPhantom() {
       this.phantomOffsets.x = this.phantomOffsets.y = "0px";
     },
     playDiscardAnimation() {
-      this.positionPhantom();
+      const originRect = this.getOriginRect();
+      if (!originRect) return;
+      const boundingRect = this.$refs.phantom.getBoundingClientRect();
+      const originX = innerWidth - (originRect.left + originRect.width / 2);
+      const originY = innerHeight - (originRect.top + originRect.height / 2);
+      this.phantomOffsets.x = `${innerWidth - originX - boundingRect.right}px`;
+      this.phantomOffsets.y = `${innerHeight - originY - boundingRect.bottom}px`;
       this.$nextTick(() => {
         setTimeout(() => {
           this.fly = true;

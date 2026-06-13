@@ -19,9 +19,6 @@ export default {
     startTime: null,
     runCount: 0,
     maxRun: 0,
-    // These are effectively the pixel pointed to by the mouse cursor
-    cursorX: 0,
-    cursorY: 0,
     discardedRune: null,
     lastScoreIncrement: 0,
     showHighScores: false,
@@ -91,10 +88,6 @@ export default {
     },
     setMaxRun(state, newValue) {
       state.maxRun = newValue;
-    },
-    setCursorCoords(state, { x, y }) {
-      state.cursorX = x;
-      state.cursorY = y;
     },
     setDiscardedRune(state, newValue) {
       state.discardedRune = newValue;
@@ -223,9 +216,6 @@ export default {
     },
     resetRunCount({ commit }) {
       commit("setRunCount", 0);
-    },
-    setCursorCoords({ commit }, coords) {
-      commit("setCursorCoords", coords);
     },
     discardRune({ state, commit }) {
       commit("setDiscardedRune", state.nextRune);

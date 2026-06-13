@@ -1,10 +1,10 @@
 <template>
   <div class="mobile-bottom-bar">
-    <Forge :value="forge"/>
+    <Forge :value="forge" :getOriginRect="() => $refs.runeWrapper.getBoundingClientRect()"/>
     <button class="mobile-pause-button" @click="pause()">Pause</button>
     <div class="next-rune-indicator" :class="{ 'new-rune': newRune }" ref="nextRuneIndicator">
       <h2 class="next-rune-heading">Next</h2>
-      <div class="rune-wrapper">
+      <div class="rune-wrapper" ref="runeWrapper">
         <Rune :shape="nextRune.shape" :color="nextRune.color"/>
         <div class="illegal-indicator" v-show="showIllegalIndicator"></div>
       </div>

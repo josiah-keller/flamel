@@ -14,8 +14,6 @@
 <script>
 import { mapState } from "vuex";
 
-// need this so that the followMouse directive can update the cursor coordinates
-import store from "../game/store";
 import Rune from "./Rune";
 
 import "../directives/glimmer-trail";
@@ -55,9 +53,13 @@ export default {
           timeout = setTimeout(function() {
             vm.isMoving = false;
           }, 100);
-          store.dispatch("setCursorCoords", { x, y });
         });
       }
+    },
+  },
+  methods: {
+    getContainerRect() {
+      return this.$refs.container.getBoundingClientRect();
     },
   },
   mounted() {

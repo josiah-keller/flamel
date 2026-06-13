@@ -1,10 +1,10 @@
 <template>
   <div class="play-area" @contextmenu="discard($event)">
     <OutsideScene v-if="!isGameOver && !delayedBoardCleared && !isPaused && showOutsideScene"/>
-    <StatusBar v-if="!isGameOver && !delayedBoardCleared"/>
+    <StatusBar v-if="!isGameOver && !delayedBoardCleared" :getOriginRect="getPlayerCursorRect"/>
     <Board v-if="!isGameOver && !delayedBoardCleared"/>
     <MobileBottomBar v-if="!isGameOver && !delayedBoardCleared && !isPaused"/>
-    <PlayerCursor v-if="viewportWidth > 900 && !isPaused" :rune="nextRune" :showIllegalIndicator="showIllegalIndicator"/>
+    <PlayerCursor ref="playerCursor" v-if="viewportWidth > 900 && !isPaused" :rune="nextRune" :showIllegalIndicator="showIllegalIndicator"/>
     <div
       class="score-tip"
       :class="{ 'score-incremented': scoreIncremented }"
@@ -44,7 +44,7 @@ export default {
     OutsideScene,
   },
   computed: {
-    ...mapState(["nextRune", "isGameOver", "isBoardCleared", "isPaused", "difficulty", "score", "lastScoreIncrement", "cursorX", "cursorY"]),
+    ...mapState(["nextRune", "isGameOver", "isBoardCleared", "isPaused", "difficulty", "score", "lastScoreIncrement"]),
     showIllegalIndicator() {
       return this.difficulty == Constants.Difficulties.EASY && !Game.anyMoveLegal(this.nextRune);
     },
@@ -61,6 +61,8 @@ export default {
       scoreIncremented: false,
       scoreTipX: 0,
       scoreTipY: 0,
+      cursorX: 0,
+      cursorY: 0,
     };
   },
   watch: {
@@ -91,6 +93,20 @@ export default {
     onWindowResize() {
       this.viewportWidth = window.innerWidth;
     },
+    onMouseMove(e) {
+      this.cursorX = innerWidth - e.clientX;
+      this.cursorY = innerHeight - e.clientY;
+      this.resetInactivityTimer();
+    },
+    onTouchStart(e) {
+      const touch = e.touches[0];
+      this.cursorX = innerWidth - touch.clientX;
+      this.cursorY = innerHeight - touch.clientY;
+      this.resetInactivityTimer();
+    },
+    getPlayerCursorRect() {
+      return this.$refs.playerCursor ? this.$refs.playerCursor.getContainerRect() : null;
+    },
     resetInactivityTimer() {
       clearTimeout(this.inactivityTimeout);
       if (this.isPaused || this.isGameOver || this.isBoardCleared) return;
@@ -103,8 +119,8 @@ export default {
   },
   mounted() {
     window.addEventListener('resize', this.onWindowResize);
-    window.addEventListener('mousemove', this.resetInactivityTimer);
-    window.addEventListener('touchstart', this.resetInactivityTimer);
+    window.addEventListener('mousemove', this.onMouseMove);
+    window.addEventListener('touchstart', this.onTouchStart);
     this.resetInactivityTimer();
     this.$watch("score", function() {
       this.scoreTipX = this.cursorX;
@@ -117,8 +133,8 @@ export default {
   },
   beforeDestroy() {
     window.removeEventListener('resize', this.onWindowResize);
-    window.removeEventListener('mousemove', this.resetInactivityTimer);
-    window.removeEventListener('touchstart', this.resetInactivityTimer);
+    window.removeEventListener('mousemove', this.onMouseMove);
+    window.removeEventListener('touchstart', this.onTouchStart);
     clearTimeout(this.inactivityTimeout);
   },
 };
