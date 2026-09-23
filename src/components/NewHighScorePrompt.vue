@@ -23,6 +23,7 @@
         <td>{{ boardsCleared }}</td>
       </tr>
     </table>
+    <p class="mulligan-notice" v-if="$store.state.mulliganUsed"><span class="mulligan-mark">*</span> Mulligan was used</p>
     <div class="new-high-score-name">
       <label for="flamel-hs-player">Your name</label>
       <input
@@ -135,6 +136,21 @@ export default {
         color: $color-text-primary;
         padding: 4px 0;
         text-align: right;
+      }
+    }
+
+    .mulligan-notice {
+      font-size: 16px;
+      font-weight: normal;
+      color: $color-text-primary;
+      width: 80%;
+      margin: 0 auto 16px;
+      text-align: center;
+
+      .mulligan-mark {
+        color: rgb(200, 160, 0);
+        text-shadow: 0px 0px 2px $color-bg-deepest;
+        margin-right: 1px;
       }
     }
 
