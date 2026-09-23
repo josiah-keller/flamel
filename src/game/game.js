@@ -34,6 +34,7 @@ export default {
     store.dispatch("startClock");
   },
   discard() {
+    store.dispatch("saveMulliganSnapshot");
     store.dispatch("incrementForge");
     store.dispatch("resetRunCount");
     if (store.state.forge > store.state.maxForges) {
@@ -47,6 +48,7 @@ export default {
     return !!(cell.shape || cell.color);
   },
   place(rowIndex, cellIndex) {
+    store.dispatch("saveMulliganSnapshot");
     if (store.state.nextRune.shape === Constants.BOMB_SHAPE) {
       if (this.cellOccupied(rowIndex, cellIndex)) {
         return this.placeBomb(rowIndex, cellIndex);
@@ -268,11 +270,37 @@ export default {
   clearCell(rowIndex, cellIndex) {
     store.dispatch("clearCell", { rowIndex, cellIndex });
   },
+  mulligan() {
+    const snapshot = store.state.previousGameState;
+    if (!snapshot) return;
+    const committedNextRune = { ...store.state.nextRune };
+    const boardChanged = store.state.cells.some((row, r) =>
+      row.some((cell, c) =>
+        cell.shape !== snapshot.cells[r][c].shape ||
+        cell.color !== snapshot.cells[r][c].color
+      )
+    );
+    store.commit("setMulliganInProgress", true);
+    store.commit("setCells", snapshot.cells);
+    store.commit("setScore", snapshot.score);
+    store.commit("setLastScoreIncrement", 0);
+    store.commit("setNextRune", snapshot.nextRune);
+    store.commit("setRunCount", snapshot.runCount);
+    store.commit("setMaxRun", snapshot.maxRun);
+    store.commit("setForge", snapshot.forge);
+    store.commit("setPreviousGameState", null);
+    store.commit("setMulliganUsed", true);
+    store.commit("setCommittedNextRune", committedNextRune);
+    if (boardChanged) store.commit("triggerMulliganBoardAnimation");
+    Promise.resolve().then(() => store.commit("setMulliganInProgress", false));
+  },
   gameOver() {
+    store.dispatch("clearMulliganSnapshot");
     store.dispatch("pauseClock");
     store.dispatch("gameOver");
   },
   boardCleared() {
+    store.dispatch("clearMulliganSnapshot");
     let score = this.scoreBoardClear();
     store.dispatch("incrementScore", score);
     store.dispatch("pauseClock");

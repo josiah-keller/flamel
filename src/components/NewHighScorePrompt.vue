@@ -86,7 +86,7 @@ export default {
         timePlayed: this.timeAccumulator,
         maxRun: this.maxRun,
         boardsCleared: this.boardsCleared,
-        mulliganUsed: false,
+        mulliganUsed: this.$store.state.mulliganUsed,
         difficulty: this.difficulty,
       };
       Highscores.addEntry(entry);

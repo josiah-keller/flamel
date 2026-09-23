@@ -41,8 +41,12 @@ export default {
   },
   mounted() {
     // have to watch rather than use computed to prevent cells from "turning" blank at the start
-    this.$watch("cell.shape", function(shape, oldShape) {
-      this.blank = shape === null && oldShape !== null;
+    this.$watch("cell.shape", function(shape) {
+      if (shape !== null) {
+        this.blank = false;
+      } else if (!this.$store.state.mulliganInProgress) {
+        this.blank = true;
+      }
     });
     this.$watch("isBoardCleared", function(newValue, oldValue) {
       if (newValue === oldValue) return;

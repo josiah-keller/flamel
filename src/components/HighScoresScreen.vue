@@ -355,6 +355,7 @@ export default {
           color: rgb(200, 160, 0);
           cursor: help;
           margin-left: 2px;
+          text-shadow: 0px 0px 2px $color-bg-deepest;
         }
       }
 

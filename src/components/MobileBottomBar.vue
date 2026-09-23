@@ -2,6 +2,12 @@
   <div class="mobile-bottom-bar">
     <Forge :value="forge" :getOriginRect="() => $refs.runeWrapper.getBoundingClientRect()"/>
     <button class="mobile-pause-button" @click="pause()">Pause</button>
+    <button
+      class="mobile-mulligan-button"
+      :class="{ 'mulligan-used': mulliganUsed, 'mulligan-disabled': !mulliganAvailable }"
+      :disabled="!mulliganAvailable"
+      @click="onMulligan"
+    ><span class="mulligan-label-full">Mulligan</span><span class="mulligan-label-short">Mull.</span></button>
     <div class="next-rune-indicator" :class="{ 'new-rune': newRune }" ref="nextRuneIndicator">
       <h2 class="next-rune-heading">Next</h2>
       <div class="rune-wrapper" ref="runeWrapper">
@@ -24,6 +30,20 @@ export default {
   components: {
     Forge,
     Rune,
+  },
+  props: {
+    onMulligan: {
+      type: Function,
+      required: true,
+    },
+    mulliganAvailable: {
+      type: Boolean,
+      required: true,
+    },
+    mulliganUsed: {
+      type: Boolean,
+      required: true,
+    },
   },
   computed: {
     ...mapState(["forge", "nextRune", "difficulty"]),
@@ -96,6 +116,39 @@ export default {
             background: transparent;
           }
         }
+      }
+    }
+
+    .mulligan-label-short {
+      display: none;
+    }
+
+    @media screen and (max-width: 390px) {
+      .mulligan-label-full { display: none; }
+      .mulligan-label-short { display: inline; }
+    }
+
+    .mobile-mulligan-button {
+      @include sidebar-button;
+      position: relative;
+      margin-left: 8px;
+
+      &.mulligan-disabled {
+        background: $color-bg-darker;
+        box-shadow: 0px 2px #1f1d18 inset;
+        opacity: 0.5;
+        cursor: default;
+      }
+
+      &.mulligan-used::after {
+        content: '*';
+        position: absolute;
+        top: 0px;
+        right: 4px;
+        font-size: 22px;
+        line-height: 1;
+        color: rgb(200, 160, 0);
+        pointer-events: none;
       }
     }
 
