@@ -1,7 +1,7 @@
 <template>
   <div class="board-container">
     <div class="board">
-      <table>
+      <table ref="board" :class="{ 'mulligan-flash': mulliganFlash }">
         <tr v-for="(row, rowIndex) in cells" :key="rowIndex">
           <td v-for="(cell, cellIndex) in row" :key="cellIndex">
             <BoardCell
@@ -26,7 +26,12 @@ export default {
     BoardCell,
   },
   computed: {
-    ...mapState(["cells"]),
+    ...mapState(["cells", "mulliganBoardAnimationTick"]),
+  },
+  data() {
+    return {
+      mulliganFlash: false,
+    };
   },
   methods: {
     cellClicked(rowIndex, cellIndex) {
@@ -36,11 +41,24 @@ export default {
       return Game.moveLegal(this.$store.state.nextRune, rowIndex, cellIndex);
     },
   },
+  mounted() {
+    this.$watch("mulliganBoardAnimationTick", function() {
+      this.mulliganFlash = true;
+    });
+    this.$refs.board.addEventListener("animationend", () => {
+      this.mulliganFlash = false;
+    });
+  },
 };
 </script>
 
 <style lang="scss">
   @import "@/global.scss";
+
+  @keyframes mulligan-flash {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
 
   .board-container {
     @include backdrop-texture;
@@ -67,6 +85,10 @@ export default {
 
       table {
         border-spacing: 0px;
+
+        &.mulligan-flash {
+          animation: mulligan-flash 250ms ease-in-out;
+        }
         border: 1px solid #222222;
 
         td {

@@ -9,6 +9,15 @@
       <button @click="pause()">Pause</button>
     </div>
     <Forge :value="forge" :getOriginRect="getOriginRect"/>
+    <div class="mulligan-section">
+      <button
+        class="mulligan-button"
+        :class="{ 'mulligan-used': mulliganUsed, 'mulligan-disabled': !mulliganAvailable }"
+        :disabled="!mulliganAvailable"
+        :title="mulliganUsed ? 'Mulligan has been used' : null"
+        @click="onMulligan"
+      >Mulligan</button>
+    </div>
     <div class="debug" v-if="debugEnabled">
       <button @click="dumpState">Dump State JSON to Console</button>
     </div>
@@ -29,6 +38,18 @@ export default {
   props: {
     getOriginRect: {
       type: Function,
+      required: true,
+    },
+    onMulligan: {
+      type: Function,
+      required: true,
+    },
+    mulliganAvailable: {
+      type: Boolean,
+      required: true,
+    },
+    mulliganUsed: {
+      type: Boolean,
       required: true,
     },
   },
@@ -120,6 +141,38 @@ export default {
       button {
         @include sidebar-button;
         margin: 0px 4px;
+      }
+    }
+
+    .mulligan-section {
+      text-align: center;
+      margin-top: 10px;
+
+      @media screen and (max-width: 900px) {
+        display: none;
+      }
+
+      .mulligan-button {
+        @include sidebar-button;
+        position: relative;
+
+        &.mulligan-disabled {
+          background: $color-bg-darker;
+          box-shadow: 0px 2px #1f1d18 inset;
+          opacity: 0.5;
+          cursor: default;
+        }
+
+        &.mulligan-used::after {
+          content: '*';
+          position: absolute;
+          top: 0px;
+          right: 4px;
+          font-size: 22px;
+          line-height: 1;
+          color: rgb(200, 160, 0);
+          pointer-events: none;
+        }
       }
     }
   }

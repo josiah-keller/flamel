@@ -1,9 +1,9 @@
 <template>
   <div class="play-area" @contextmenu="discard($event)">
     <OutsideScene v-if="!isGameOver && !delayedBoardCleared && !isPaused && showOutsideScene"/>
-    <StatusBar v-if="!isGameOver && !delayedBoardCleared" :getOriginRect="getPlayerCursorRect"/>
+    <StatusBar v-if="!isGameOver && !delayedBoardCleared" :getOriginRect="getPlayerCursorRect" :onMulligan="performMulligan" :mulliganAvailable="mulliganAvailable" :mulliganUsed="mulliganUsed"/>
     <Board v-if="!isGameOver && !delayedBoardCleared"/>
-    <MobileBottomBar v-if="!isGameOver && !delayedBoardCleared && !isPaused"/>
+    <MobileBottomBar v-if="!isGameOver && !delayedBoardCleared && !isPaused" :onMulligan="performMulligan" :mulliganAvailable="mulliganAvailable" :mulliganUsed="mulliganUsed"/>
     <PlayerCursor ref="playerCursor" v-if="viewportWidth > 900 && !isPaused" :rune="nextRune" :showIllegalIndicator="showIllegalIndicator"/>
     <div
       class="score-tip"
@@ -14,7 +14,8 @@
     </div>
     <GameOverScreen v-if="isGameOver"/>
     <BoardClearedScreen v-if="isBoardCleared"/>
-    <PauseScreen v-if="isPaused"/>
+    <PauseScreen v-if="isPaused && !showMulliganModal"/>
+    <MulliganWarningModal v-if="showMulliganModal" @confirm="onMulliganModalConfirm" @cancel="onMulliganModalCancel"/>
   </div>
 </template>
 
@@ -30,6 +31,7 @@ import GameOverScreen from "./GameOverScreen";
 import BoardClearedScreen from "./BoardClearedScreen";
 import PauseScreen from "./PauseScreen";
 import MobileBottomBar from "./MobileBottomBar";
+import MulliganWarningModal from "./MulliganWarningModal";
 import OutsideScene from "./OutsideScene.vue";
 
 export default {
@@ -37,6 +39,7 @@ export default {
     Board,
     StatusBar,
     MobileBottomBar,
+    MulliganWarningModal,
     PlayerCursor,
     GameOverScreen,
     BoardClearedScreen,
@@ -44,12 +47,15 @@ export default {
     OutsideScene,
   },
   computed: {
-    ...mapState(["nextRune", "isGameOver", "isBoardCleared", "isPaused", "difficulty", "score", "lastScoreIncrement"]),
+    ...mapState(["nextRune", "isGameOver", "isBoardCleared", "isPaused", "difficulty", "score", "lastScoreIncrement", "previousGameState", "mulliganUsed"]),
     showIllegalIndicator() {
       return this.difficulty == Constants.Difficulties.EASY && !Game.anyMoveLegal(this.nextRune);
     },
     showOutsideScene() {
       return this.viewportWidth > 900;
+    },
+    mulliganAvailable() {
+      return !!this.previousGameState;
     },
   },
   data() {
@@ -63,6 +69,7 @@ export default {
       scoreTipY: 0,
       cursorX: 0,
       cursorY: 0,
+      showMulliganModal: false,
     };
   },
   watch: {
@@ -89,6 +96,25 @@ export default {
       e.preventDefault();
       if (this.isBoardCleared || this.isPaused) return;
       Game.discard();
+    },
+    performMulligan() {
+      if (!this.mulliganAvailable || this.isPaused || this.isBoardCleared || this.isGameOver) return;
+      if (localStorage.getItem("mulliganModalAcknowledged") !== "true") {
+        this.$store.dispatch("pauseGame");
+        this.showMulliganModal = true;
+      } else {
+        Game.mulligan();
+      }
+    },
+    onMulliganModalConfirm() {
+      localStorage.setItem("mulliganModalAcknowledged", "true");
+      this.showMulliganModal = false;
+      this.$store.dispatch("resumeGame");
+      Game.mulligan();
+    },
+    onMulliganModalCancel() {
+      this.showMulliganModal = false;
+      this.$store.dispatch("resumeGame");
     },
     onWindowResize() {
       this.viewportWidth = window.innerWidth;
@@ -123,6 +149,7 @@ export default {
     window.addEventListener('touchstart', this.onTouchStart);
     this.resetInactivityTimer();
     this.$watch("score", function() {
+      if (!this.lastScoreIncrement) return;
       this.scoreTipX = this.cursorX;
       this.scoreTipY = this.cursorY;
       this.scoreIncremented = true;

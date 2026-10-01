@@ -23,6 +23,11 @@ export default {
     lastScoreIncrement: 0,
     showHighScores: false,
     highScoresInitialDifficulty: null,
+    previousGameState: null,
+    mulliganUsed: false,
+    committedNextRune: null,
+    mulliganBoardAnimationTick: 0,
+    mulliganInProgress: false,
   },
   mutations: {
     setCells(state, cells) {
@@ -101,6 +106,21 @@ export default {
     setHighScoresInitialDifficulty(state, value) {
       state.highScoresInitialDifficulty = value;
     },
+    setPreviousGameState(state, snapshot) {
+      state.previousGameState = snapshot;
+    },
+    setMulliganUsed(state, value) {
+      state.mulliganUsed = value;
+    },
+    setCommittedNextRune(state, rune) {
+      state.committedNextRune = rune;
+    },
+    triggerMulliganBoardAnimation(state) {
+      state.mulliganBoardAnimationTick++;
+    },
+    setMulliganInProgress(state, value) {
+      state.mulliganInProgress = value;
+    },
   },
   actions: {
     initializeBoard({ commit }) {
@@ -124,8 +144,16 @@ export default {
       commit("setForge", 0);
       commit("setRunCount", 0);
       commit("setMaxRun", 0);
+      commit("setPreviousGameState", null);
+      commit("setMulliganUsed", false);
+      commit("setCommittedNextRune", null);
     },
     selectNextRune({ state, commit }) {
+      if (state.committedNextRune) {
+        commit("setNextRune", state.committedNextRune);
+        commit("setCommittedNextRune", null);
+        return;
+      }
       let nextRune = Random.generateRune(state.level);
       while (state.nextRune && nextRune.shape === state.nextRune.shape && nextRune.color === state.nextRune.color) {
         nextRune = Random.generateRune(state.level);
@@ -219,6 +247,20 @@ export default {
     },
     discardRune({ state, commit }) {
       commit("setDiscardedRune", state.nextRune);
+    },
+    saveMulliganSnapshot({ state, commit }) {
+      commit("setPreviousGameState", {
+        cells: JSON.parse(JSON.stringify(state.cells)),
+        score: state.score,
+        nextRune: { ...state.nextRune },
+        runCount: state.runCount,
+        maxRun: state.maxRun,
+        forge: state.forge,
+      });
+    },
+    clearMulliganSnapshot({ commit }) {
+      commit("setPreviousGameState", null);
+      commit("setCommittedNextRune", null);
     },
     openHighScores({ commit }, difficulty = null) {
       commit("setHighScoresInitialDifficulty", difficulty);
