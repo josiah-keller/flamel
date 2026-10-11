@@ -330,7 +330,7 @@ describe("game logic", () => {
       [false, 2, 1, 65],
       [false, 3, 1, 80],
       [false, 4, 1, 100],
-      [false, 4, 2, 350],
+      [false, 4, 2, 300],
       [true, 1, 1, 6],
       [true, 2, 1, 7],
       [true, 4, 1, 9],
@@ -485,18 +485,16 @@ describe("game logic", () => {
       expect(store.state.nextRune).toEqual(GREEN_F);
     });
 
-    // saveMulliganSnapshot runs before the legality check, so an illegal click
-    // still overwrites the undo snapshot. Asserted here so that a change in
-    // that behavior is deliberate rather than accidental.
-    it("still overwrites the mulligan snapshot on an illegal move", () => {
+    // saveMulliganSnapshot runs after the legality check, so a misclick leaves
+    // the undo snapshot the player is holding alone.
+    it("leaves the mulligan snapshot alone on an illegal move", () => {
       useBoard(store, TestData.Boards.ADJACENCY_CORNERS.cells);
       store.commit("setNextRune", GREEN_F);
       store.commit("setPreviousGameState", null);
 
       Game.place(5, 2);
 
-      expect(store.state.previousGameState).not.toBeNull();
-      expect(store.state.previousGameState.nextRune).toEqual(GREEN_F);
+      expect(store.state.previousGameState).toBeNull();
     });
 
     it("includes the span-clear bonus when a placement completes a row", () => {
@@ -526,8 +524,9 @@ describe("game logic", () => {
 
       Game.place(3, 4);
 
-      // Adjacency 4, not previously gold, two spans cleared: 50 + 300
-      expect(store.state.score).toBe(350);
+      // Adjacency 4, not previously gold, two spans cleared: 50 + 250.
+      // This is the move NOTES.md observed scoring 300 on Easy.
+      expect(store.state.score).toBe(300);
     });
 
     it("ends the game when a span clear empties the board", () => {
@@ -555,19 +554,36 @@ describe("game logic", () => {
       expect(incrementBoardsPlayed).toHaveBeenCalledTimes(1);
     });
 
-    // checkForBlankBoard runs before checkForBoardCleared, and a span clear on
-    // an otherwise-gold board satisfies both at once, so the game ends *and*
-    // reports the board cleared. Documented here because the two screens
-    // disagree about what just happened.
-    it("reports both game over and board cleared when a span clear empties an all-gold board", () => {
+    // A span clear on an otherwise-gold board is all-blank *and* all-gold at
+    // once. All-gold is a win by the game's own definition, so the cleared
+    // board wins and the blank-board game over never runs.
+    it("clears the board, and doesn't end the game, when a span clear empties an all-gold board", () => {
       useBoard(store, TestData.Boards.ALL_GOLD_ROW_CLEAR.cells);
       store.commit("setNextRune", RED_F);
       mockRuneDraws(DRAW_1, DRAW_2);
 
       Game.place(3, 4);
 
-      expect(store.state.isGameOver).toBe(true);
+      expect(Game.isBoardAllBlank()).toBe(true);
       expect(store.state.isBoardCleared).toBe(true);
+      expect(store.state.isGameOver).toBe(false);
+      // (3,4) was already gold: adjacency 2 (2), one span cleared (5), plus
+      // the level 1 Easy board bonus (500)
+      expect(store.state.score).toBe(507);
+      expect(incrementBoardsPlayed).toHaveBeenCalledTimes(1);
+    });
+
+    it("pauses the clock exactly once on a span clear that empties an all-gold board", () => {
+      useBoard(store, TestData.Boards.ALL_GOLD_ROW_CLEAR.cells);
+      store.commit("setNextRune", RED_F);
+      mockRuneDraws(DRAW_1, DRAW_2);
+      store.commit("setStartTime", new Date(Date.now() - 10000));
+
+      Game.place(3, 4);
+
+      // One pause banks ~10s; the old double pause banked it twice
+      expect(store.state.timeAccumulator).toBeGreaterThanOrEqual(10000);
+      expect(store.state.timeAccumulator).toBeLessThan(15000);
     });
   });
 
@@ -592,6 +608,7 @@ describe("game logic", () => {
       store.commit("setForge", 2);
       store.commit("setNextRune", BOMB);
       mockRuneDraws(DRAW_1, DRAW_2);
+      store.commit("setPreviousGameState", null);
       const before = cloneDeep(store.state.cells);
 
       Game.place(0, 0);
@@ -600,6 +617,8 @@ describe("game logic", () => {
       expect(store.state.score).toBe(0);
       expect(store.state.forge).toBe(2);
       expect(store.state.nextRune).toEqual(BOMB);
+      // the wasted click doesn't burn the mulligan snapshot either
+      expect(store.state.previousGameState).toBeNull();
     });
 
     it("ends the game when it clears the last occupied cell", () => {
@@ -611,6 +630,21 @@ describe("game logic", () => {
 
       expect(Game.isBoardAllBlank()).toBe(true);
       expect(store.state.isGameOver).toBe(true);
+    });
+
+    // A bomb empties a cell as gold, so bombing the last rune off an otherwise
+    // gold board is all-gold and all-blank at once. Same rule as a span clear:
+    // all-gold is a win.
+    it("clears the board when it bombs the last rune off an all-gold board", () => {
+      useBoard(store, TestData.Boards.ALL_GOLD_ONE_RUNE_LEFT.cells);
+      store.commit("setNextRune", BOMB);
+      mockRuneDraws(DRAW_1, DRAW_2);
+
+      Game.place(3, 4);
+
+      expect(Game.isBoardAllBlank()).toBe(true);
+      expect(store.state.isBoardCleared).toBe(true);
+      expect(store.state.isGameOver).toBe(false);
     });
   });
 
@@ -754,11 +788,13 @@ describe("game logic", () => {
       expect(store.state.mulliganBoardAnimationTick).toBe(1);
     });
 
-    it("skips the board animation after an illegal move left the cells alone", () => {
+    it("skips the board animation after a discard left the cells alone", () => {
       useBoard(store, TestData.Boards.ADJACENCY_CORNERS.cells);
+      store.commit("setForge", 2);
       store.commit("setNextRune", GREEN_F);
+      mockRuneDraws(DRAW_1, DRAW_2);
 
-      Game.place(5, 2);
+      Game.discard();
       expect(store.state.previousGameState).not.toBeNull();
 
       Game.mulligan();

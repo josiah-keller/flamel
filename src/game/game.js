@@ -48,9 +48,9 @@ export default {
     return !!(cell.shape || cell.color);
   },
   place(rowIndex, cellIndex) {
-    store.dispatch("saveMulliganSnapshot");
     if (store.state.nextRune.shape === Constants.BOMB_SHAPE) {
       if (this.cellOccupied(rowIndex, cellIndex)) {
+        store.dispatch("saveMulliganSnapshot");
         return this.placeBomb(rowIndex, cellIndex);
       } else {
         return;
@@ -60,6 +60,8 @@ export default {
     if (! this.moveLegal(store.state.nextRune, rowIndex, cellIndex)) {
       return;
     }
+
+    store.dispatch("saveMulliganSnapshot");
 
     let wasCellGold = store.state.cells[rowIndex][cellIndex].gold;
 
@@ -77,9 +79,7 @@ export default {
     let score = this.scoreMove(wasCellGold, adjacency, spansCleared);
     store.dispatch("incrementScore", score);
 
-    this.checkForBlankBoard();
-
-    this.checkForBoardCleared();
+    this.checkForEndOfBoard();
 
     store.dispatch("updateRunCount");
     store.dispatch("decrementForge");
@@ -87,7 +87,7 @@ export default {
   },
   placeBomb(rowIndex, cellIndex) {
     this.clearCell(rowIndex, cellIndex);
-    this.checkForBlankBoard();
+    this.checkForEndOfBoard();
     store.dispatch("decrementForge");
     store.dispatch("selectNextRune");
   },
@@ -266,6 +266,14 @@ export default {
     if (this.isBoardAllBlank()) {
       this.gameOver();
     }
+  },
+  // This ensures that a fully gold board takes priority over an empty, but not
+  // blank board.
+  checkForEndOfBoard() {
+    if (this.isBoardAllGold()) {
+      return this.boardCleared();
+    }
+    this.checkForBlankBoard();
   },
   clearCell(rowIndex, cellIndex) {
     store.dispatch("clearCell", { rowIndex, cellIndex });

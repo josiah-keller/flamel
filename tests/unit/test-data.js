@@ -180,5 +180,9 @@ export default {
       "3,0": "Ar", "3,1": "Br", "3,2": "Cr", "3,3": "Dr",
       "3,5": "Er", "3,6": "Ar", "3,7": "Br", "3,8": "Cr",
     }),
+
+    // Wholly gold apart from the single rune at (3,4), so bombing that rune
+    // also leaves the board all-gold *and* all-blank at once.
+    ALL_GOLD_ONE_RUNE_LEFT: boardOf("*", { "3,4": "Ar" }),
   },
 };

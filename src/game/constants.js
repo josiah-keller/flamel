@@ -64,7 +64,7 @@ const Constants = {
       NonGold: {
         0: 0,
         1: 50,
-        2: 300,
+        2: 250,
       },
     },
     CLEAR_BOARD_BASE: 500,
