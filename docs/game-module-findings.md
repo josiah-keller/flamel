@@ -5,15 +5,21 @@ Behaviors uncovered while building out test coverage for the modules around
 [store-config.js](../src/game/store/store-config.js),
 [random.js](../src/game/random.js) and [constants.js](../src/game/constants.js).
 
-**Nothing here is fixed.** Unlike
-[game-logic-findings.md](game-logic-findings.md), where every finding was
-repaired before it was written up, this document records what the code does
-today. Every item is pinned by a passing test asserting the *current* behavior,
-so the tests are green against unmodified source and will fail the moment any of
-it changes — deliberately or otherwise. Fixing these is a separate piece of
-work; the tests will need updating alongside each fix.
+Each item is pinned by a passing test. Findings still open are asserted as the
+behavior the code has *today*, so the suite stays green against unmodified
+source and will fail the moment any of it changes — deliberately or otherwise.
+Findings marked FIXED have had their tests moved to the new behavior.
 
-Findings 1 and 2 are the two worth acting on.
+| # | Finding | Status |
+|---|---|---|
+| 1 | Shape thresholds overflow the shape pool at level 24 | open |
+| 2 | A missing or duplicated entry id disables eviction | open |
+| 3 | `save()` has no error handling | **fixed** |
+| 4 | `pauseClock` never clears `startTime` | open |
+| 5 | `discardRune` stores a reference | open |
+| 6 | `getTopScores()` with no difficulty returns nothing | open |
+
+Findings 1 and 2 are the two still worth acting on.
 
 ## 1. The shape thresholds overflow the shape pool at level 24
 
@@ -95,24 +101,57 @@ Pinned by `throws away the new entry when the stored ones have no ids`,
 `always gets back down to the cap when ids are well formed`
 ([highscores.spec.js](../tests/unit/highscores.spec.js)).
 
-## 3. `save()` has no error handling
+## 3. `save()` has no error handling — FIXED
 
-[`save()`](../src/game/highscores.js#L48) calls `localStorage.setItem` bare.
-`load()` is carefully defensive — it catches parse failures and type-checks
-every field — but the write path has nothing, so a `QuotaExceededError`, a
-browser configured to block site data, or Safari's private mode throws straight
-out through `addEntry`, `saveSettings`, `incrementBoardsPlayed`, `resetBoardsPlayed`
-and `resetAll`.
+`save()` called `localStorage.setItem` bare. `load()` is carefully defensive —
+it catches parse failures and type-checks every field — but the write path had
+nothing, so a `QuotaExceededError`, a browser configured to block site data, or
+Safari's private mode threw straight out through `addEntry`, `saveSettings`,
+`incrementBoardsPlayed`, `resetBoardsPlayed` and `resetAll`.
 
-`incrementBoardsPlayed` is the one that matters, because it is called from
+`incrementBoardsPlayed` was the one that mattered, because it is called from
 `Game.boardCleared()` ([game.js:316](../src/game/game.js#L316)) — in the middle
 of a game, on the success path, after the clock has been paused and the board
-cleared flag set. An exception there happens inside the cleared-board
-transition.
+cleared flag set. An exception there landed inside the cleared-board
+transition, so a browser refusing to store a statistic would break the player's
+completed board.
 
-Pinned by `lets a storage failure propagate`
-([highscores.spec.js](../tests/unit/highscores.spec.js)), which asserts it for
-all five entry points.
+[`save()`](../src/game/highscores.js#L48) now wraps the write and returns
+whether it succeeded:
+
+```js
+function save(data) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    return true;
+  } catch (_) {
+    return false;
+  }
+}
+```
+
+A failed write is a no-op rather than a crash — the previously stored data is
+left intact, since nothing is removed before the write. `saveSettings`,
+`incrementBoardsPlayed`, `resetBoardsPlayed` and `resetAll` pass the result
+back to their callers, so a UI that wants to tell the player their score
+couldn't be saved now has something to check. Nothing checks it yet.
+
+The catch is silent, matching `load()`'s existing `catch (_)`. `JSON.stringify`
+sits inside the `try` as well, so a non-serializable payload is contained the
+same way.
+
+`addEntry` is deliberately unchanged: it still returns the entry it built, with
+no signal that storage rejected it. That phantom return is part of finding 2
+and is better fixed there, alongside the eviction case that drops the entry for
+an entirely different reason.
+
+Pinned by the `save` block in
+[highscores.spec.js](../tests/unit/highscores.spec.js) —
+`contains a storage failure instead of throwing`, `reports success`, the
+`survives a storage failure` and `reports the failure to its caller` tables
+across all five entry points, `leaves the stored data untouched when a write
+fails`, and `still reports the new entry from addEntry when the write fails`
+for the finding-2 overlap.
 
 ## 4. `pauseClock` never clears `startTime`, so a second pause double counts
 

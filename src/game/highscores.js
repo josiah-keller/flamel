@@ -31,22 +31,29 @@ function getBoardsPlayed() {
 function incrementBoardsPlayed() {
   const data = load();
   data.boardsPlayed = (data.boardsPlayed || 0) + 1;
-  save(data);
+  return save(data);
 }
 
 function resetBoardsPlayed() {
   const data = load();
   data.boardsPlayed = 0;
-  save(data);
+  return save(data);
 }
 
 function resetAll() {
   const data = load();
-  save({ settings: data.settings, scores: [], boardsPlayed: 0 });
+  return save({ settings: data.settings, scores: [], boardsPlayed: 0 });
 }
 
 function save(data) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    return true;
+  } catch (_) {
+    // suppress exceptions - a throw out of this function would break the
+    // cleared-board transition rather than just losing a statistic.
+    return false;
+  }
 }
 
 // Returns entries sorted by score descending for a given difficulty.
@@ -74,7 +81,7 @@ function getSettings() {
 function saveSettings(settings) {
   const data = load();
   data.settings = { ...data.settings, ...settings };
-  save(data);
+  return save(data);
 }
 
 // Generates a simple unique id.
@@ -124,6 +131,8 @@ function addEntry(entry) {
   const data = load();
   const newEntry = { id: makeId(), date: new Date().toISOString(), ...entry };
   data.scores = evict([...data.scores, newEntry]);
+  // The entry is returned whether or not the write succeeded, and whether or
+  // not eviction kept it — see finding 2 in docs/game-module-findings.md.
   save(data);
   return newEntry;
 }

@@ -95,19 +95,67 @@ describe("high scores", () => {
   });
 
   describe("save", () => {
-    it("lets a storage failure propagate", () => {
-      // save() has no try/catch, so a full or unavailable localStorage throws
-      // out through every mutating function. incrementBoardsPlayed is called
-      // from Game.boardCleared(), i.e. mid-game — finding 3 in
-      // docs/game-module-findings.md.
-      jest.spyOn(localStorage.__proto__, "setItem").mockImplementation(() => {
+    // Simulates the ways a real browser refuses a write: a full quota, site
+    // data blocked, Safari private mode.
+    function breakStorage() {
+      return jest.spyOn(localStorage.__proto__, "setItem").mockImplementation(() => {
         throw new DOMException("quota", "QuotaExceededError");
       });
-      expect(() => Highscores.save({ scores: [] })).toThrow();
-      expect(() => Highscores.addEntry(entry())).toThrow();
-      expect(() => Highscores.incrementBoardsPlayed()).toThrow();
-      expect(() => Highscores.saveSettings({ playerName: "x" })).toThrow();
-      expect(() => Highscores.resetAll()).toThrow();
+    }
+
+    it("reports success", () => {
+      expect(Highscores.save({ settings: {}, scores: [], boardsPlayed: 0 })).toBe(true);
+    });
+
+    it("contains a storage failure instead of throwing", () => {
+      // save() should not throw because the exception would bubble up to
+      // interrupt game logic
+      breakStorage();
+      expect(() => Highscores.save({ scores: [] })).not.toThrow();
+      expect(Highscores.save({ scores: [] })).toBe(false);
+    });
+
+    it.each([
+      ["addEntry", () => Highscores.addEntry(entry())],
+      ["saveSettings", () => Highscores.saveSettings({ playerName: "x" })],
+      ["incrementBoardsPlayed", () => Highscores.incrementBoardsPlayed()],
+      ["resetBoardsPlayed", () => Highscores.resetBoardsPlayed()],
+      ["resetAll", () => Highscores.resetAll()],
+    ])("%s survives a storage failure", (_label, mutate) => {
+      breakStorage();
+      expect(mutate).not.toThrow();
+    });
+
+    it.each([
+      ["saveSettings", () => Highscores.saveSettings({ playerName: "x" })],
+      ["incrementBoardsPlayed", () => Highscores.incrementBoardsPlayed()],
+      ["resetBoardsPlayed", () => Highscores.resetBoardsPlayed()],
+      ["resetAll", () => Highscores.resetAll()],
+    ])("%s reports the failure to its caller", (_label, mutate) => {
+      // Nothing checks these yet, but a UI that wants to tell the player their
+      // score couldn't be saved has something to check.
+      breakStorage();
+      expect(mutate()).toBe(false);
+    });
+
+    it("leaves the stored data untouched when a write fails", () => {
+      seed([entry({ id: "kept" })], { boardsPlayed: 3 });
+      breakStorage();
+      Highscores.incrementBoardsPlayed();
+      Highscores.saveSettings({ playerName: "nope" });
+      jest.restoreAllMocks();
+      const data = Highscores.load();
+      expect(data.scores.map(e => e.id)).toEqual(["kept"]);
+      expect(data.boardsPlayed).toBe(3);
+      expect(data.settings.playerName).toBe("");
+    });
+
+    it("still reports the new entry from addEntry when the write fails", () => {
+      breakStorage();
+      const saved = Highscores.addEntry(entry({ id: "ghost" }));
+      expect(saved.id).toBe("ghost");
+      jest.restoreAllMocks();
+      expect(Highscores.load().scores).toEqual([]);
     });
   });
 
