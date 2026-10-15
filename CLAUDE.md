@@ -61,4 +61,7 @@ Tests are in [tests/unit/](tests/unit/) and focus on the game logic layer (`game
 
 ## Contribution Guidelines
 
+### Comments
 Do not remove or modify existing comments UNLESS the related code is being deleted, or is changing in a way that obsoletes the comment.
+
+Do not add comments that describe the edits you are making to the code. Any comments added should only describe the present state of the code, not historical context.

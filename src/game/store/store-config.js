@@ -224,9 +224,17 @@ export default {
       commit("setStartTime", new Date());
     },
     pauseClock({ state, commit }) {
+      // No startTime means the clock isn't running — either it was never
+      // started or it is already paused — so there is no span of time to bank.
+      if (! state.startTime) {
+        return;
+      }
       let now = new Date(),
         timeDelta = now.getTime() - state.startTime.getTime();
       commit("setTimeAccumulator", state.timeAccumulator + timeDelta);
+      // Stop the clock so a second pause is a no-op rather than counting the
+      // same span twice.
+      commit("setStartTime", null);
     },
     resetClock({ commit }) {
       commit("setTimeAccumulator", 0);

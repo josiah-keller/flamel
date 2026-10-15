@@ -53,8 +53,9 @@ describe("game logic", () => {
     localVue.use(Vuex);
     store = new Vuex.Store(cloneDeep(storeConfig));
     Game.setStore(store);
-    // pauseClock reads startTime, so anything that ends the game needs a clock
-    // that has been started. Tests that assert on timing override this.
+    // pauseClock only banks time while the clock is running, so anything that
+    // ends the game needs a clock that has been started for the elapsed time
+    // to be recorded. Tests that assert on timing override this.
     store.commit("setStartTime", new Date());
     // Keep board-cleared bookkeeping away from real localStorage.
     incrementBoardsPlayed = jest.spyOn(Highscores, "incrementBoardsPlayed")

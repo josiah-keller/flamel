@@ -15,7 +15,7 @@ Findings marked FIXED have had their tests moved to the new behavior.
 | 1 | Shape thresholds overflow the shape pool at level 24 | open |
 | 2 | A missing or duplicated entry id disables eviction | open |
 | 3 | `save()` has no error handling | **fixed** |
-| 4 | `pauseClock` never clears `startTime` | open |
+| 4 | `pauseClock` never clears `startTime` | **fixed** |
 | 5 | `discardRune` stores a reference | open |
 | 6 | `getTopScores()` with no difficulty returns nothing | open |
 
@@ -153,37 +153,74 @@ across all five entry points, `leaves the stored data untouched when a write
 fails`, and `still reports the new entry from addEntry when the write fails`
 for the finding-2 overlap.
 
-## 4. `pauseClock` never clears `startTime`, so a second pause double counts
+## 4. `pauseClock` never clears `startTime`, so a second pause double counts — FIXED
 
-[`pauseClock`](../src/game/store/store-config.js#L226) adds
-`now - startTime` to `timeAccumulator` and leaves `startTime` as it was. Pausing
-twice without an intervening `startClock` therefore counts the same stretch of
-time twice. It also reads `state.startTime.getTime()` unguarded, so pausing
-before the clock was ever started throws a `TypeError`.
+`pauseClock` added `now - startTime` to `timeAccumulator` and left `startTime`
+as it was. Pausing twice without an intervening `startClock` therefore counted
+the same stretch of time twice. It also read `state.startTime.getTime()`
+unguarded, so pausing before the clock was ever started threw a `TypeError`.
 
 This is the mechanism behind finding 2 in
 [game-logic-findings.md](game-logic-findings.md) — the double-pause there was a
 symptom, and fixing `checkForEndOfBoard` removed that particular caller without
 removing the hazard.
 
-Nothing double-pauses today, but the guard is thinner than it looks. `pauseGame`
-is dispatched from four places, and unlike `discard` and `performMulligan`
-(which both bail on `this.isPaused`), neither
+Nothing double-paused, but the guard was thinner than it looked. `pauseGame` is
+dispatched from four places, and unlike `discard` and `performMulligan` (which
+both bail on `this.isPaused`), neither
 [StatusBar.pause()](../src/components/StatusBar.vue#L63) nor
 [MobileBottomBar.pause()](../src/components/MobileBottomBar.vue#L60) checks
 whether the game is already paused. `MobileBottomBar` is unmounted while paused
 ([PlayArea.vue:6](../src/components/PlayArea.vue#L6)) but `StatusBar` is not
 ([PlayArea.vue:4](../src/components/PlayArea.vue#L4)) — its Pause button stays
-mounted, and what stops a second click is `PauseScreen` covering it at
-`z-index: 100` against the status bar's `51`. The invariant is held by CSS
+mounted, and what stopped a second click was `PauseScreen` covering it at
+`z-index: 100` against the status bar's `51`. The invariant was held by CSS
 stacking rather than by any check in the action or its callers.
 
-Making `pauseClock` null `startTime` (and no-op when it is already null) would
-make the double-pause harmless regardless.
+[`pauseClock`](../src/game/store/store-config.js#L226) now stops the clock as
+well as banking the time, and treats a clock that isn't running as nothing to
+do:
 
-Pinned by `double counts when paused twice`,
-`throws when paused before the clock was ever started` and
-`resets the accumulator but keeps the start time`
+```js
+pauseClock({ state, commit }) {
+  if (! state.startTime) {
+    return;
+  }
+  let now = new Date(),
+    timeDelta = now.getTime() - state.startTime.getTime();
+  commit("setTimeAccumulator", state.timeAccumulator + timeDelta);
+  commit("setStartTime", null);
+},
+```
+
+`startTime` now means "the clock is running, since this moment" rather than
+"the clock was last started at this moment", which is what makes the second
+pause a no-op instead of a double count. Pausing an unstarted clock is also
+harmless now, so no caller has to arrange a start time before ending a game.
+
+This was safe to change because `pauseClock` was the only thing in `src/` that
+read `startTime` — the components that display elapsed time
+([BoardClearedScreen.vue](../src/components/BoardClearedScreen.vue),
+[NewHighScorePrompt.vue](../src/components/NewHighScorePrompt.vue)) read
+`timeAccumulator`, and they render after a pause has already banked it.
+
+`resetClock` is deliberately unchanged. It only zeroes the accumulator, and
+`Game.init()` dispatches it immediately before `startClock`, so it never needs
+to touch `startTime` itself.
+
+One consequence worth knowing: the clock assertion in
+`pauses the clock exactly once on a span clear that empties an all-gold board`
+([game.spec.js:576](../tests/unit/game.spec.js#L576)) is now a weaker signal,
+because a reintroduced double pause would no longer double the accumulator. The
+mutual exclusion that test was written to guard is still pinned by the flag
+assertions in `clears the board, and doesn't end the game, when a span clear
+empties an all-gold board`, so the coverage holds.
+
+Pinned by `stops the clock when it banks the time`,
+`counts a stretch of time once however often it is paused`,
+`does nothing when paused before the clock was ever started`,
+`banks each stretch separately across a start and pause cycle` and
+`is harmless to pause an already paused game`
 ([store-config.spec.js](../tests/unit/store-config.spec.js)).
 
 ## 5. `discardRune` stores a reference rather than a copy

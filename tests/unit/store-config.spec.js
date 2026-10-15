@@ -9,8 +9,8 @@ import TestData from "./test-data";
 // The store in isolation. game.spec.js drives it through Game.* and so covers
 // these mutations and actions only incidentally; here they're called directly,
 // which is the only way to reach the branches no Game method takes — the
-// committedNextRune draw, the out-of-bounds updateCell guard, the clock's
-// null-startTime throw.
+// committedNextRune draw, the out-of-bounds updateCell guard, pausing a clock
+// that isn't running.
 //
 // Game.setStore is deliberately not called: nothing in this file goes through
 // game.js, so the module-level singleton there is left alone.
@@ -308,27 +308,39 @@ describe("store config", () => {
       expect(store.state.timeAccumulator).toBeLessThan(70000);
     });
 
-    it("throws when paused before the clock was ever started", () => {
-      // startTime is null until startClock runs, and pauseClock reads
-      // .getTime() off it unguarded. Game.gameOver() and Game.boardCleared()
-      // both pause, which is why every spec that ends a game sets a start time
-      // first.
+    it("stops the clock when it banks the time", () => {
+      store.commit("setStartTime", new Date(Date.now() - 10000));
+      store.dispatch("pauseClock");
       expect(store.state.startTime).toBeNull();
-      expect(() => store.dispatch("pauseClock")).toThrow(TypeError);
     });
 
-    it("double counts when paused twice", () => {
-      // Finding 4 in docs/game-module-findings.md: pauseClock never nulls
-      // startTime, so a second pause adds the same stretch of time again.
+    it("counts a stretch of time once however often it is paused", () => {
       store.commit("setStartTime", new Date(Date.now() - 10000));
       store.dispatch("pauseClock");
       const once = store.state.timeAccumulator;
       store.dispatch("pauseClock");
-      expect(store.state.startTime).not.toBeNull();
-      expect(store.state.timeAccumulator).toBeGreaterThanOrEqual(once * 2);
+      store.dispatch("pauseClock");
+      expect(store.state.timeAccumulator).toBe(once);
+    });
+
+    it("does nothing when paused before the clock was ever started", () => {
+      expect(store.state.startTime).toBeNull();
+      expect(() => store.dispatch("pauseClock")).not.toThrow();
+      expect(store.state.timeAccumulator).toBe(0);
+    });
+
+    it("banks each stretch separately across a start and pause cycle", () => {
+      store.commit("setStartTime", new Date(Date.now() - 10000));
+      store.dispatch("pauseClock");
+      store.commit("setStartTime", new Date(Date.now() - 5000));
+      store.dispatch("pauseClock");
+      expect(store.state.timeAccumulator).toBeGreaterThanOrEqual(15000);
+      expect(store.state.timeAccumulator).toBeLessThan(20000);
     });
 
     it("resets the accumulator but keeps the start time", () => {
+      // resetClock is unchanged: Game.init() dispatches it before startClock,
+      // so it only ever has to zero the total.
       store.dispatch("startClock");
       const startTime = store.state.startTime;
       store.commit("setTimeAccumulator", 30000);
@@ -348,6 +360,16 @@ describe("store config", () => {
       expect(store.state.isPaused).toBe(false);
       // Resuming restamps startTime, so the paused stretch isn't counted.
       expect(Date.now() - store.state.startTime.getTime()).toBeLessThan(1000);
+      expect(store.state.timeAccumulator).toBe(pausedAt);
+    });
+
+    it("is harmless to pause an already paused game", () => {
+      // Pausing again should be a no-op
+      store.commit("setStartTime", new Date(Date.now() - 10000));
+      store.dispatch("pauseGame");
+      const pausedAt = store.state.timeAccumulator;
+      store.dispatch("pauseGame");
+      expect(store.state.isPaused).toBe(true);
       expect(store.state.timeAccumulator).toBe(pausedAt);
     });
   });
