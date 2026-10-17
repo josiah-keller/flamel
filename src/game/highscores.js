@@ -92,20 +92,25 @@ function makeId() {
 // Determines which entry ids are "protected" (appear in any top-10 view).
 function protectedIds(scores) {
   const ids = new Set();
+  // Helper for adding ID to the set. Guards against any malformed entry that
+  // lacks an ID, to prevent buggy eviction.
+  const addId = e => {
+    if (e.id) ids.add(e.id);
+  };
   // Top N per difficulty
   for (const diff of DIFFICULTIES) {
     const top = scores
       .filter(e => e.difficulty === diff)
       .sort((a, b) => b.score - a.score)
       .slice(0, TOP_N);
-    top.forEach(e => ids.add(e.id));
+    top.forEach(addId);
   }
   // Top N overall
   scores
     .slice()
     .sort((a, b) => b.score - a.score)
     .slice(0, TOP_N)
-    .forEach(e => ids.add(e.id));
+    .forEach(addId);
   return ids;
 }
 

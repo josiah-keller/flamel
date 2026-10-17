@@ -8,18 +8,20 @@ Behaviors uncovered while building out test coverage for the modules around
 Each item is pinned by a passing test. Findings still open are asserted as the
 behavior the code has *today*, so the suite stays green against unmodified
 source and will fail the moment any of it changes — deliberately or otherwise.
-Findings marked FIXED have had their tests moved to the new behavior.
+Findings marked FIXED have had their tests moved to the new behavior. A finding
+marked CLOSED turned out not to be reachable; the write-up is kept because the
+mechanism is still a trap for future changes.
 
 | # | Finding | Status |
 |---|---|---|
 | 1 | Shape thresholds overflow the shape pool at level 24 | open |
-| 2 | A missing or duplicated entry id disables eviction | open |
+| 2 | A missing or duplicated entry id disables eviction | **closed** — not reachable; guarded anyway |
 | 3 | `save()` has no error handling | **fixed** |
 | 4 | `pauseClock` never clears `startTime` | **fixed** |
 | 5 | `discardRune` stores a reference | open |
 | 6 | `getTopScores()` with no difficulty returns nothing | open |
 
-Findings 1 and 2 are the two still worth acting on.
+Finding 1 is the only one with live player impact still outstanding.
 
 ## 1. The shape thresholds overflow the shape pool at level 24
 
@@ -59,45 +61,96 @@ Pinned by `tops the shape thresholds out one past the end of the shape pool` and
 `overflows on roughly one in 22 draws at level 24`
 ([random.spec.js](../tests/unit/random.spec.js)).
 
-## 2. A missing or duplicated entry id disables high score eviction
+## 2. A missing or duplicated entry id disables high score eviction — CLOSED, NOT REACHABLE
 
-[`protectedIds()`](../src/game/highscores.js#L86) collects the ids that appear in
-any top-10 view into a `Set`, and [`evict()`](../src/game/highscores.js#L105)
+This was originally written up as a live bug. It isn't: no code path can produce
+an entry without an id, and the duplicate-id variant needs concurrency this game
+doesn't have. The mechanism is real and is described below because it is a trap
+for future changes, and the missing-id half is now guarded — but nothing was
+broken for any player.
+
+### The mechanism
+
+[`protectedIds()`](../src/game/highscores.js#L93) collects the ids that appear
+in any top-10 view into a `Set`, and [`evict()`](../src/game/highscores.js#L120)
 refuses to remove anything in it. Both work on `entry.id` without checking that
 one exists.
 
-An entry with no `id` contributes a single `undefined` to the set. Every other
-id-less entry then satisfies `protected_.has(entry.id)`, because they all have
-`entry.id === undefined` too. The whole stored table reads as protected.
+An entry with no `id` contributed a single `undefined` to the set. Every other
+id-less entry then satisfied `protected_.has(entry.id)`, because they all had
+`entry.id === undefined` too, so the whole stored table read as protected.
 
-What happens next is the part worth noting. `addEntry()` appends the new entry
-and then evicts
-([highscores.js:126](../src/game/highscores.js#L126)), so the only entry
-eviction is *willing* to drop is the one just added — and if the new score
-doesn't crack a top 10, it is unprotected and goes. **The score the player
-actually just earned is the one discarded**, while a hundred legacy entries are
-preserved. `addEntry` still returns it, with nothing to indicate it never
-reached storage.
+The consequence was the sharp part. `addEntry()` appends the new entry and then
+evicts ([highscores.js:141](../src/game/highscores.js#L141)), so the only entry
+eviction was *willing* to drop was the one just added — and a new score that
+didn't crack a top 10 was unprotected, so it went. The score the player just
+earned would be the one discarded while a hundred older entries were preserved,
+and `addEntry` would still return it as though it had been saved.
 
-The same thing happens with a duplicated id: protecting one entry protects every
-twin. `makeId()` is
-`` `${Date.now()}-${Math.floor(Math.random() * 1000)}` ``
-([highscores.js:82](../src/game/highscores.js#L82)), so two entries saved in the
-same millisecond collide with probability 1/1000 — and a caller-supplied `id`
-overrides the generated one outright (see the smaller notes below).
+### Why it can't happen
 
-Worth being precise about what is *not* broken: with well-formed distinct ids,
-eviction always succeeds. At most 40 ids can be protected — ten per difficulty
-plus ten overall — which is comfortably under the 100-entry cap, so there are
-always enough unprotected candidates to remove. The cap cannot creep upward on
-well-formed data. The bug is entirely in the handling of absent and colliding
-ids.
+- **No legacy data.** [highscores.js](../src/game/highscores.js) has two commits
+  in its whole history: `4bf911b Add high scores tracking` and `ebac92d Suppress
+  exceptions when saving to local storage`. `id: makeId()` is present in
+  `addEntry` in the first of those, unchanged since. No released version ever
+  wrote id-less entries, so no existing player can be holding any.
+- **The only producer can't omit it.**
+  [NewHighScorePrompt.vue](../src/components/NewHighScorePrompt.vue#L84) builds
+  the entry as a literal with seven fields — `name`, `score`, `timePlayed`,
+  `maxRun`, `boardsCleared`, `mulliganUsed`, `difficulty` — and no `id` key at
+  all, so the spread-last ordering in `addEntry` never overrides the generated
+  id.
+- **One writer, one key.**
+  [highscores.js:50](../src/game/highscores.js#L50) is the only `setItem` for
+  `flamel_data` anywhere in `src/`. `save()` is exported but has no callers
+  outside the module.
+- **`makeId()` can't return nothing** — it is a template literal over
+  `Date.now()` and `Math.floor(...)`, so always a non-empty string.
 
-A fix would be to skip entries without an id when building the protected set
-(`if (e.id) ids.add(e.id)`), and to exempt the entry being added from eviction.
+That leaves hand-edited storage, or a future caller passing `id: undefined`
+explicitly — which would silently win the spread, and `JSON.stringify` would
+then drop the key entirely.
 
-Pinned by `throws away the new entry when the stored ones have no ids`,
-`evicts nothing when every entry shares one id`, and the counterpart invariant
+The duplicate-id variant needs two entries written in the same millisecond with
+the same 1-in-1000 suffix. Entries are only ever written when a player finishes
+a board and confirms a name, so there is no concurrency and no batch path that
+could produce two in the same millisecond.
+
+The phantom return is unreachable for a second, independent reason: with
+well-formed ids the new entry is always *last* in `evict`'s oldest-first
+ordering, and at most 40 entries can be protected (ten per difficulty plus ten
+overall) against a cap of 100 — so there is always an older unprotected entry to
+drop instead. `addEntry` is also only called behind an `isNewHighScore` gate
+([GameOverScreen.vue:50](../src/components/GameOverScreen.vue#L50)), so the new
+entry is in a top 10 and protected anyway.
+
+### What changed
+
+`protectedIds` now skips entries without an id, so the missing-id class is gone
+regardless of how a future caller behaves:
+
+```js
+const addId = e => {
+  if (e.id) ids.add(e.id);
+};
+```
+
+Id-less entries are now treated as unprotected, which is the safe direction:
+eviction drops them oldest-first and keeps the new score.
+
+The duplicate-id case is deliberately left as-is. The guard doesn't address it —
+a duplicate is a real id that happens to be shared, so one protected entry
+still protects every twin — and closing it would mean either deduplicating ids
+on read or exempting the new entry from eviction, which is more machinery than a
+scenario that can't occur warrants.
+
+Also worth knowing for any future change here: `id` is load-bearing in the UI,
+not just in eviction. It is the `v-for` key in the score table and drives the
+new-entry highlight through `newEntryId`
+([HighScoresScreen.vue:112](../src/components/HighScoresScreen.vue#L112)).
+
+Pinned by `keeps the new entry when the stored ones have no ids`,
+`still evicts nothing when every entry shares one id`, and the invariant
 `always gets back down to the cap when ids are well formed`
 ([highscores.spec.js](../tests/unit/highscores.spec.js)).
 

@@ -341,28 +341,22 @@ describe("high scores", () => {
       expect(Highscores.load().scores).toHaveLength(MAX_ENTRIES);
     });
 
-    it("throws away the new entry when the stored ones have no ids", () => {
-      // Finding 2 in docs/game-module-findings.md. protectedIds builds a Set
-      // of ids; id-less entries contribute a single `undefined`, and then
-      // every other id-less entry matches it, so the entire stored table reads
-      // as protected. The only entry eviction is willing to drop is the one
-      // just added — so the score the player actually earned is the one that
-      // disappears.
+    it("keeps the new entry when the stored ones have no ids", () => {
+      // This tests the "missing ID" guard in protectedIds. If entries somehow
+      // exist without an ID, they should never be protected above new entries.
+      // No code path produces an id-less entry, so this guards the invariant
+      // rather than a live bug.
       seed(TestData.Scores.tableWithoutIds(MAX_ENTRIES));
-      const saved = Highscores.addEntry(entry({ id: "newest", score: 1 }));
-      const ids = Highscores.load().scores.map(e => e.id);
-      expect(ids).toHaveLength(MAX_ENTRIES);
-      expect(ids).not.toContain("newest");
-      // addEntry hands back the entry it just discarded, with no indication
-      // that it never made it to storage. Its one caller
-      // (NewHighScorePrompt.vue) ignores the return value, so this is latent.
-      expect(saved.id).toBe("newest");
+      Highscores.addEntry(entry({ id: "newest", score: 1 }));
+      const scores = Highscores.load().scores;
+      expect(scores).toHaveLength(MAX_ENTRIES);
+      expect(scores.map(e => e.id)).toContain("newest");
     });
 
     it("evicts nothing when every entry shares one id", () => {
-      // The same mechanism with a colliding id rather than a missing one:
-      // protecting one entry protects all of its twins. makeId can collide for
-      // two entries saved in the same millisecond.
+      // Pins expected bug if entire store is full of duplicate IDs
+      // This is a hypothetical, since IDs can only collide on the same
+      // millisecond which is not a practical concern in single-player
       seed(TestData.Scores.tableWithDuplicateIds(MAX_ENTRIES));
       Highscores.addEntry(entry({ id: "duplicate", score: 1 }));
       expect(Highscores.load().scores).toHaveLength(MAX_ENTRIES + 1);
