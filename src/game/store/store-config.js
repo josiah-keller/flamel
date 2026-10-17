@@ -254,7 +254,12 @@ export default {
       commit("setRunCount", 0);
     },
     discardRune({ state, commit }) {
-      commit("setDiscardedRune", state.nextRune);
+      // Copy rather than handing over state.nextRune itself, so the two don't
+      // alias the same object until the next draw replaces one of them. Null
+      // stays null: Forge.vue's watcher decides whether to play the discard
+      // animation with an explicit `=== null` check, and `{ ...null }` would
+      // give it a truthy empty object instead.
+      commit("setDiscardedRune", state.nextRune ? { ...state.nextRune } : null);
     },
     saveMulliganSnapshot({ state, commit }) {
       commit("setPreviousGameState", {

@@ -375,15 +375,29 @@ describe("store config", () => {
   });
 
   describe("discardRune", () => {
-    it("records the discarded rune by reference", () => {
-      // Finding 5 in docs/game-module-findings.md: discardedRune aliases the
-      // very object nextRune pointed at rather than copying it. Harmless while
-      // selectNextRune always assigns a fresh object, but it means a mutation
-      // of one shows up in the other.
+    it("records a copy of the discarded rune", () => {
+      // Copy, not reference
       const rune = { ...DRAW_1 };
       store.commit("setNextRune", rune);
       store.dispatch("discardRune");
-      expect(store.state.discardedRune).toBe(rune);
+      expect(store.state.discardedRune).toEqual(rune);
+      expect(store.state.discardedRune).not.toBe(rune);
+    });
+
+    it("keeps the discarded rune when the next one is replaced", () => {
+      store.commit("setNextRune", { ...DRAW_1 });
+      store.dispatch("discardRune");
+      store.commit("setNextRune", { ...DRAW_2 });
+      expect(store.state.discardedRune).toEqual(DRAW_1);
+    });
+
+    it("records null rather than an empty rune when there is nothing to discard", () => {
+      // Forge.vue watches discardedRune and returns early on an exact null, so
+      // the copy must not turn a null rune into a truthy `{}`. Not reachable in
+      // play — a rune is always drawn before a discard is possible.
+      store.commit("setNextRune", null);
+      store.dispatch("discardRune");
+      expect(store.state.discardedRune).toBeNull();
     });
   });
 

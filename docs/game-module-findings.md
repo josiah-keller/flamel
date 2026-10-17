@@ -18,7 +18,7 @@ mechanism is still a trap for future changes.
 | 2 | A missing or duplicated entry id disables eviction | **closed** — not reachable; guarded anyway |
 | 3 | `save()` has no error handling | **fixed** |
 | 4 | `pauseClock` never clears `startTime` | **fixed** |
-| 5 | `discardRune` stores a reference | open |
+| 5 | `discardRune` stores a reference | **fixed** |
 | 6 | `getTopScores()` with no difficulty returns nothing | open |
 
 Finding 1 is the only one with live player impact still outstanding.
@@ -276,19 +276,42 @@ Pinned by `stops the clock when it banks the time`,
 `is harmless to pause an already paused game`
 ([store-config.spec.js](../tests/unit/store-config.spec.js)).
 
-## 5. `discardRune` stores a reference rather than a copy
+## 5. `discardRune` stores a reference rather than a copy — FIXED
 
-[`discardRune`](../src/game/store/store-config.js#L248) commits
-`state.nextRune` itself, so `discardedRune` and `nextRune` point at the same
-object until the next draw replaces one of them. Every other rune-shaped piece
-of state is copied on the way in — `place()` writes `{...nextRune, gold: true}`,
-`saveMulliganSnapshot` writes `{...state.nextRune}`.
+`discardRune` committed `state.nextRune` itself, so `discardedRune` and
+`nextRune` pointed at the same object until the next draw replaced one of them.
+Every other rune-shaped piece of state is copied on the way in — `place()`
+writes `{...nextRune, gold: true}`, `saveMulliganSnapshot` writes
+`{...state.nextRune}` — so this was the one place the convention broke.
 
-Harmless today, since `selectNextRune` always assigns a freshly generated
-object and nothing mutates a rune in place. It becomes a bug the moment
-something does, and `Forge.vue` watches `discardedRune` to animate it.
+It was harmless as it stood, since `selectNextRune` always assigns a freshly
+generated object and nothing mutates a rune in place. It would have become a bug
+the moment something did, and `Forge.vue` watches `discardedRune` (deeply) to
+animate the rune flying into the forge.
 
-Pinned by `records the discarded rune by reference`
+[`discardRune`](../src/game/store/store-config.js#L256) now copies:
+
+```js
+commit("setDiscardedRune", state.nextRune ? { ...state.nextRune } : null);
+```
+
+The null branch is load-bearing rather than defensive padding. `Forge.vue`'s
+watcher returns early on an exact `null`
+([Forge.vue:79](../src/components/Forge.vue#L79)), so an unconditional spread
+would hand it a truthy `{}` and play a discard animation for a rune with no
+shape or colour. That is the same `{ ...null }` trap `saveMulliganSnapshot`
+already falls into (see the smaller notes below); there it is unreachable and
+harmless, here it would have been a visible glitch, so the two are not worth
+making consistent with each other.
+
+Nothing depends on the old identity semantics: `Forge.vue` reads `.shape` and
+`.color` off the value and compares it only against `null`, and the watcher
+still fires on each discard because every discard writes a fresh object — more
+reliably than before, not less.
+
+Pinned by `records a copy of the discarded rune`,
+`keeps the discarded rune when the next one is replaced` and
+`records null rather than an empty rune when there is nothing to discard`
 ([store-config.spec.js](../tests/unit/store-config.spec.js)).
 
 ## 6. `getTopScores()` with no difficulty returns nothing
